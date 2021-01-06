@@ -2,6 +2,11 @@ const { app, BrowserWindow, ipcMain, dialog } = require("electron");
 const path = require("path");
 const express = require("express");
 const expressApp = express();
+const fs = require("fs");
+const Jimp = require("jimp");
+const mcfsd = require("mcfsd");
+const lodash = require("lodash");
+
 
 process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true"
 process.env.PORT = process.env.PORT || 8987;
@@ -27,8 +32,7 @@ const createWindow = async () => {
     darkTheme: true,
     autoHideMenuBar: true,
     focusable: true,
-    frame: false,
-    transparent: true
+    frame: false
   });
 
   mainWindow.loadURL(`http://127.0.0.1:${process.env.PORT}/`);
@@ -48,7 +52,78 @@ const createWindow = async () => {
     if (dialogResults.response) {
       app.quit();
     }
+  });
 
+  ipcMain.on("pag-image-info", async (event, fileName) => {
+    if (!fileName) return;
+    let img = await Jimp.read(path.resolve(fileName));
+    mainWindow.webContents.send("pag-image-info", { width: img.getWidth(), height: img.getHeight() });
+    img = 0;
+  });
+
+  let pagState = {
+    running: false,
+    max: 100,
+    current: 0,
+    state: "...",
+  };
+
+
+  ipcMain.on("pag-start", async (_, opts) => {
+    if (pagState.running) return;
+
+    pagState = {
+      running: false,
+      max: 100,
+      current: 0,
+      state: "...",
+    };
+
+    let clientUpdater = setInterval(() => {
+      mainWindow.webContents.send("pag-state", pagState);
+    }, 75)
+
+    pagState.running = true;
+    pagState.current++;
+
+
+    let img = await Jimp.read(path.resolve(opts.filePath));
+    pagState.state = "Readd..";
+    pagState.current++;
+
+
+    if (opts.scaleFactor != 1) {
+      await img.scale(opts.scaleFactor);
+      pagState.state = "Scaled..";
+      pagState.current++;
+
+    }
+
+    if (opts.ditherFactor != 0) {
+      img = await Jimp.create(mcfsd(img.bitmap, opts.ditherFactor));
+      pagState.state = "Dithered..";
+      pagState.current++;
+
+    }
+
+    let resultText = "";
+    pagState.max = pagState.max + (img.getWidth() * img.getHeight());
+
+
+    img.scan(0, 0, img.bitmap.width, img.bitmap.height, (x, y, index) => {
+      setTimeout(() => {
+        pagState.state = `Baking.. (${x},${y})`;
+        pagState.current++;
+
+        if (x == img.bitmap.width - 1 && y == img.bitmap.height - 1) {
+          pagState.state = `Generated!`;
+          pagState.current++;
+          pagState.running = false;
+
+          setTimeout(() => { clearInterval(clientUpdater); }, 50);
+        }
+      }, index / 100)
+    })
   })
 };
 

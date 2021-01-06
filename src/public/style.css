@@ -1,0 +1,145 @@
+html,
+body {
+  overflow: overlay;
+}
+
+/* total width */
+::-webkit-scrollbar {
+  width: 11px;
+}
+
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 11px 11px rgba(0, 0, 0, 0.05);
+  border: solid 2px transparent;
+  border-radius: 11px;
+}
+
+::-webkit-scrollbar-thumb {
+  box-shadow: inset 0 0 11px 11px rgba(0, 0, 0, 0.1);
+  border: solid 2px transparent;
+  border-radius: 11px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  box-shadow: inset 0 0 11px 11px rgba(0, 0, 0, 0.2);
+}
+
+/* set button(top and bottom of the scrollbar) */
+::-webkit-scrollbar-button {
+  display: none;
+}
+
+#app {
+  overflow: hidden;
+}
+
+main {
+  overflow: auto;
+}
+
+.control-bar {
+  width: 100vw;
+  height: 25px;
+  background-color: #d5caee;
+
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
+
+  cursor: move;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  z-index: 99999999;
+}
+
+.control-bar-button {
+  float: right;
+
+  text-align: center;
+
+  width: 45px;
+  height: 25px;
+
+  color: white;
+  background-color: rgba(0, 0, 0, 0.1);
+
+  -webkit-app-region: no-drag;
+
+  cursor: pointer;
+
+  display: block;
+}
+
+.control-bar-button:hover {
+  background-color: #f04747;
+}
+
+.control-bar-text {
+  color: #0000009f;
+  font-weight: 600;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+  line-height: 25px;
+  padding-left: 5px;
+  display: inline-block;
+}
+
+.b-tabs .tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.card-header-title {
+  padding-bottom: 0;
+  user-select: none;
+}
+
+main {
+  margin-top: 25px !important;
+  position: relative;
+}
+
+.vertical-center {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.preview-image {
+  width: 100%;
+  max-width: 120px;
+
+  background-color: rgba(231, 194, 229, 0.1);
+  border: transparent;
+}
+
+.image-info {
+  overflow: hidden;
+  position: absolute;
+  word-wrap: break-word;
+  word-break: break-all;
+  right: 6px;
+  top: 6px;
+  width: 125px;
+  text-align: right;
+}
+
+.start-buttons {
+  padding: 16px;
+
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+
+.start-buttons.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* .tabs .icon {
+  margin-right: 0 !important;
+} */

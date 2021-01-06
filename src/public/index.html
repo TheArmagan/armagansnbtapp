@@ -9,132 +9,199 @@
     />
     <link rel="stylesheet" href="./lib/buefy/buefy.min.css" />
     <title>Armagan's NBT App</title>
-    <style>
-      html,
-      body {
-        overflow: auto !important;
-      }
-
-      .control-bar {
-        width: 100vw;
-        height: 25px;
-        background-color: #d5caee;
-
-        -webkit-user-select: none;
-        -webkit-app-region: drag;
-
-        cursor: move;
-
-        position: relative;
-      }
-
-      .control-bar-button {
-        float: right;
-
-        text-align: center;
-
-        width: 45px;
-        height: 25px;
-
-        color: white;
-        background-color: rgba(0, 0, 0, 0.1);
-
-        -webkit-app-region: no-drag;
-
-        cursor: pointer;
-
-        display: block;
-      }
-
-      .control-bar-button:hover {
-        background-color: #f04747;
-      }
-
-      .control-bar-text {
-        color: #0000009f;
-        font-weight: 600;
-        font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
-          "Lucida Sans", Arial, sans-serif;
-        line-height: 25px;
-        padding-left: 5px;
-        display: inline-block;
-      }
-
-      .b-tabs .tabs::-webkit-scrollbar {
-        display: none;
-      }
-    </style>
+    <link rel="stylesheet" href="style.css" />
     <script>
       const { ipcRenderer } = require("electron");
     </script>
   </head>
 
   <body>
-    <div id="app" class="container">
+    <div id="app">
       <div class="control-bar">
         <div class="control-bar-text">{{title}}</div>
         <div class="control-bar-button" @click="quit">
           <b-icon icon="close"></b-icon>
         </div>
       </div>
-      <b-tabs position="is-centered">
-        <b-tab-item label="PAG" icon="grain">
-          <h1 class="subtitle">Pixel Art Generator</h1>
+      <main class="container" style="position: relative">
+        <b-tabs position="is-centered">
+          <b-tab-item label="PAG" icon="grain">
+            <div class="content">
+              <h1 class="subtitle">Pixel Art Generator</h1>
 
-          <b-field class="file is-primary" :class="{'has-name': !!pag.file}">
-            <b-upload v-model="pag.file" class="file-label">
-              <span class="file-cta">
-                <b-icon class="file-icon" icon="upload"></b-icon>
-                <span class="file-label">Select File</span>
-              </span>
-              <span class="file-name" v-if="pag.file">
-                {{ pag.file.name }} ({{ (pag.file.size / 1024).toFixed(1) }}KB)
-              </span>
-            </b-upload>
-          </b-field>
-        </b-tab-item>
-        <b-tab-item label="SMB" icon="image-filter-hdr">
-          <h1 class="subtitle">Schematic Generator</h1>
-        </b-tab-item>
-        <b-tab-item label="Settings" icon="cog">
-          <h1 class="subtitle">Settings</h1>
+              <div class="columns">
+                <div class="column is-half">
+                  <b-field
+                    class="file is-primary"
+                    :class="{'has-name': !!pag.file}"
+                  >
+                    <b-upload v-model="pag.file" class="file-label">
+                      <span class="file-cta">
+                        <b-icon
+                          class="file-icon"
+                          :icon="pag.file ? 'file-check' : 'upload'"
+                        ></b-icon>
+                        <span class="file-label"
+                          >{{pag.file ? "Selected" : "Select File"}}</span
+                        >
+                      </span>
+                      <span class="file-name" v-if="pag.file">
+                        {{ pag.file.name }}
+                      </span>
+                    </b-upload>
+                  </b-field>
+                </div>
+                <div class="column is-half">
+                  <b-field
+                    class="file is-primary"
+                    :class="{'has-name': !!pag.output}"
+                  >
+                    <b-upload v-model="pag.output" class="file-label">
+                      <span class="file-cta">
+                        <b-icon
+                          class="file-icon"
+                          :icon="pag.output ? 'file-check' : 'upload'"
+                        ></b-icon>
+                        <span class="file-label"
+                          >{{pag.output ? "Selected" : "Select Output"}}</span
+                        >
+                      </span>
+                      <span class="file-name" v-if="pag.output">
+                        {{ pag.output.name }}
+                      </span>
+                    </b-upload>
+                  </b-field>
+                </div>
+              </div>
+              <div class="columns">
+                <div class="column is-half">
+                  <b-field label="Dithering" label-position="on-border">
+                    <b-numberinput
+                      v-model="pag.ditherFactor"
+                      min="0"
+                      max="10"
+                    ></b-numberinput>
+                  </b-field>
+                </div>
+                <div class="column is-half">
+                  <b-field
+                    :label="`Scale Factor${pag.imageInfo ? ` (${Math.round(pag.scaleFactor*pag.imageInfo?.width)}x${Math.round(pag.scaleFactor*pag.imageInfo?.height)})` : ''}`"
+                    label-position="on-border"
+                  >
+                    <b-numberinput
+                      v-model="pag.scaleFactor"
+                      min="0.05"
+                      max="2"
+                      step="0.05"
+                    ></b-numberinput>
+                  </b-field>
+                </div>
+              </div>
+              <div class="columns">
+                <div class="column is-half">
+                  <b-field
+                    label="Align"
+                    label-position="on-border"
+                    style="width: 100%"
+                  >
+                    <b-select v-model="pag.align" expanded>
+                      <option value="horizontal" selected>Horizontal</option>
+                      <option value="vertical" disabled>Vertical (Soon)</option>
+                    </b-select>
+                  </b-field>
+                </div>
+              </div>
+            </div>
+            <div
+              class="start-buttons"
+              :class="{'disabled': !isPAGReadyToStart}"
+            >
+              <b-progress
+                :value="pag.state.current"
+                show-value
+                :max="pag.state.max"
+                type="is-info"
+              >
+                <span style="color: black"
+                  >{{pag.state.current}}/{{pag.state.max}}</span
+                ></b-progress
+              >
+              <div class="columns">
+                <div class="column">
+                  <b-button
+                    type="is-primary"
+                    style="width: 100%"
+                    :loading="pag.state.running"
+                    @click="pagStart"
+                    >Generate</b-button
+                  >
+                </div>
+                <div class="column is-one-third">
+                  <b-button type="is-primary is-static" style="width: 100%"
+                    >{{pag.state.state}}</b-button
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="image-info" v-if="pag.imageInfo">
+              <p>{{pag.imageInfo?.width * pag.imageInfo?.height}} blocks</p>
+              <p>{{pag.imageInfo?.width}}x{{pag.imageInfo?.height}}</p>
+              <p>{{Math.ceil(pag.imageInfo?.size / 1024)}}KB</p>
+            </div>
+          </b-tab-item>
+          <b-tab-item label="SMB" icon="image-filter-hdr">
+            <div class="content">
+              <h1 class="subtitle">Schematic Generator</h1>
+            </div>
+          </b-tab-item>
+          <b-tab-item label="Settings" icon="cog">
+            <div class="content">
+              <h1 class="subtitle">Settings</h1>
 
-          <!-- <section>Add collapsible</section> -->
-        </b-tab-item>
-      </b-tabs>
+              <b-collapse
+                class="card"
+                animation="slide"
+                :open="settings.collapseIndex == 'pag'"
+                @open="settings.collapseIndex = 'pag'"
+              >
+                <div
+                  slot="trigger"
+                  slot-scope="props"
+                  class="card-header"
+                  role="button"
+                >
+                  <h3 class="card-header-title">Pixel Art Generator</h3>
+                  <a class="card-header-icon">
+                    <b-icon :icon="props.open ? 'menu-down' : 'menu-up'">
+                    </b-icon>
+                  </a>
+                </div>
+                <div class="card-content">
+                  <div class="content">
+                    <b-field label="Color Map">
+                      <b-input
+                        type="textarea"
+                        minlength="0"
+                        maxlength="16384"
+                        placeholder="name=stone;data=0;topColor=#ff00ff;sideColor=#ff00ff"
+                        v-model="pag.colorMap.text"
+                      >
+                      </b-input>
+                    </b-field>
+                  </div>
+                </div>
+              </b-collapse>
+            </div>
+          </b-tab-item>
+        </b-tabs>
+      </main>
     </div>
 
     <script src="./lib/vue/vue2.js"></script>
     <script src="./lib/buefy/buefy.min.js"></script>
+    <script src="./lib/lodash/lodash.min.js"></script>
+    <script src="./defaults.js"></script>
 
-    <script>
-      const app = new Vue({
-        el: "#app",
-        data: {
-          title: document.title,
-          pag: {
-            file: null,
-          },
-          options: {
-            collapse: {},
-          },
-        },
-        watch: {
-          "pag.file"(file) {
-            if (file && file.type != "image/jpeg") {
-              this.$buefy.toast.open("Only JPG Images Sported!");
-              this.pag.file = null;
-            }
-          },
-        },
-        methods: {
-          quit() {
-            ipcRenderer.send("app-quit");
-          },
-        },
-      });
-
-      Vue.use(Buefy);
-    </script>
+    <script src="./script.js"></script>
   </body>
 </html>
