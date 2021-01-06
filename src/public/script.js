@@ -10,6 +10,7 @@ const app = new Vue({
         text: "",
         object: {},
       },
+      scaffoldBlock: null,
       output: null,
       scaleFactor: 1,
       state: {
@@ -54,7 +55,10 @@ const app = new Vue({
       ipcRenderer.send("pag-start", {
         filePath: this.pag.file?.path,
         ditherFactor: this.pag.ditherFactor,
-        scaleFactor: this.pag.scaleFactor
+        scaleFactor: this.pag.scaleFactor,
+        outputPath: this.pag.output?.path,
+        colorMap: this.pag.colorMap.object,
+        align: this.pag.align
       })
     }
   },
@@ -69,6 +73,12 @@ const app = new Vue({
     }
 
     this.pag.colorMap.text = localStorage.getItem("pag.colorMap");
+
+    if (typeof localStorage.getItem("pag.scaffoldBlock") == "undefined") {
+      localStorage.setItem("pag.scaffoldBlock", DEFAULT_SCAFFOLD_BLOCK);
+    }
+
+    this.pag.scaffoldBlock = localStorage.getItem("pag.scaffoldBlock");
   },
 });
 

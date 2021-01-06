@@ -89,4 +89,6 @@ id=orange_glazed_terracotta;meta=0;topColor=#F9801D
 id=pink_glazed_terracotta;meta=0;topColor=#F4B5CB
 id=purple_glazed_terracotta;meta=0;topColor=#8C33BC
 id=red_glazed_terracotta;meta=0;topColor=#AE2D26
-id=yellow_glazed_terracotta;meta=0;topColor=#F1AF13`
+id=yellow_glazed_terracotta;meta=0;topColor=#F1AF13`;
+
+const DEFAULT_SCAFFOLD_BLOCK = `id=stone;meta=0`;

@@ -136,7 +136,7 @@
                     >Generate</b-button
                   >
                 </div>
-                <div class="column is-one-third">
+                <div class="column is-two-fifths">
                   <b-button type="is-primary is-static" style="width: 100%"
                     >{{pag.state.state}}</b-button
                   >
@@ -183,8 +183,17 @@
                         type="textarea"
                         minlength="0"
                         maxlength="16384"
-                        placeholder="name=stone;data=0;topColor=#ff00ff;sideColor=#ff00ff"
+                        placeholder="id=stone;meta=0;topColor=#ff00ff;sideColor=#ff00ff"
                         v-model="pag.colorMap.text"
+                      >
+                      </b-input>
+                    </b-field>
+                    <b-field label="Scaffold Block">
+                      <b-input
+                        minlength="0"
+                        maxlength="128"
+                        placeholder="name=stone;meta=0"
+                        v-model="pag.scaffoldBlock"
                       >
                       </b-input>
                     </b-field>
