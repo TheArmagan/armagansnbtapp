@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.materialdesignicons.com/5.3.45/css/materialdesignicons.min.css"
+    />
+    <link rel="stylesheet" href="./lib/buefy/buefy.min.css" />
+    <title>Armagan's NBT App</title>
+    <style>
+      html,
+      body {
+        overflow: auto !important;
+      }
+
+      .control-bar {
+        width: 100vw;
+        height: 25px;
+        background-color: #d5caee;
+
+        -webkit-user-select: none;
+        -webkit-app-region: drag;
+
+        cursor: move;
+
+        position: relative;
+      }
+
+      .control-bar-button {
+        float: right;
+
+        text-align: center;
+
+        width: 45px;
+        height: 25px;
+
+        color: white;
+        background-color: rgba(0, 0, 0, 0.1);
+
+        -webkit-app-region: no-drag;
+
+        cursor: pointer;
+
+        display: block;
+      }
+
+      .control-bar-button:hover {
+        background-color: #f04747;
+      }
+
+      .control-bar-text {
+        color: #0000009f;
+        font-weight: 600;
+        font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+          "Lucida Sans", Arial, sans-serif;
+        line-height: 25px;
+        padding-left: 5px;
+        display: inline-block;
+      }
+
+      .b-tabs .tabs::-webkit-scrollbar {
+        display: none;
+      }
+    </style>
+    <script>
+      const { ipcRenderer } = require("electron");
+    </script>
+  </head>
+
+  <body>
+    <div id="app" class="container">
+      <div class="control-bar">
+        <div class="control-bar-text">{{title}}</div>
+        <div class="control-bar-button" @click="quit">
+          <b-icon icon="close"></b-icon>
+        </div>
+      </div>
+      <b-tabs position="is-centered">
+        <b-tab-item label="PAG" icon="grain">
+          <h1 class="subtitle">Pixel Art Generator</h1>
+
+          <b-field class="file is-primary" :class="{'has-name': !!pag.file}">
+            <b-upload v-model="pag.file" class="file-label">
+              <span class="file-cta">
+                <b-icon class="file-icon" icon="upload"></b-icon>
+                <span class="file-label">Select File</span>
+              </span>
+              <span class="file-name" v-if="pag.file">
+                {{ pag.file.name }} ({{ (pag.file.size / 1024).toFixed(1) }}KB)
+              </span>
+            </b-upload>
+          </b-field>
+        </b-tab-item>
+        <b-tab-item label="SMB" icon="image-filter-hdr">
+          <h1 class="subtitle">Schematic Generator</h1>
+        </b-tab-item>
+        <b-tab-item label="Settings" icon="cog">
+          <h1 class="subtitle">Settings</h1>
+
+          <!-- <section>Add collapsible</section> -->
+        </b-tab-item>
+      </b-tabs>
+    </div>
+
+    <script src="./lib/vue/vue2.js"></script>
+    <script src="./lib/buefy/buefy.min.js"></script>
+
+    <script>
+      const app = new Vue({
+        el: "#app",
+        data: {
+          title: document.title,
+          pag: {
+            file: null,
+          },
+          options: {
+            collapse: {},
+          },
+        },
+        watch: {
+          "pag.file"(file) {
+            if (file && file.type != "image/jpeg") {
+              this.$buefy.toast.open("Only JPG Images Sported!");
+              this.pag.file = null;
+            }
+          },
+        },
+        methods: {
+          quit() {
+            ipcRenderer.send("app-quit");
+          },
+        },
+      });
+
+      Vue.use(Buefy);
+    </script>
+  </body>
+</html>
