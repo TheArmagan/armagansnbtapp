@@ -10,7 +10,10 @@ const app = new Vue({
         text: "",
         object: {},
       },
-      scaffoldBlock: null,
+      scaffoldBlock: {
+        text: "",
+        object: {},
+      },
       output: null,
       scaleFactor: 1,
       state: {
@@ -46,6 +49,10 @@ const app = new Vue({
       app.pag.colorMap.object = parseConfig(text);
       localStorage.setItem("pag.colorMap", text);
     }, 1000),
+    "pag.scaffoldBlock.text": _.debounce((text) => {
+      app.pag.scaffoldBlock.object = parseConfig(text)[0];
+      localStorage.setItem("pag.scaffoldBlock", text);
+    }, 1000),
   },
   methods: {
     quit() {
@@ -58,7 +65,8 @@ const app = new Vue({
         scaleFactor: this.pag.scaleFactor,
         outputPath: this.pag.output?.path,
         colorMap: this.pag.colorMap.object,
-        align: this.pag.align
+        align: this.pag.align,
+        scaffoldBlock: this.pag.scaffoldBlock.object
       })
     }
   },
@@ -68,17 +76,17 @@ const app = new Vue({
     },
   },
   mounted() {
-    if (typeof localStorage.getItem("pag.colorMap") == "undefined") {
+    if (!localStorage.getItem("pag.colorMap")) {
       localStorage.setItem("pag.colorMap", DEFAULT_COLOR_MAP);
     }
 
     this.pag.colorMap.text = localStorage.getItem("pag.colorMap");
 
-    if (typeof localStorage.getItem("pag.scaffoldBlock") == "undefined") {
+    if (!localStorage.getItem("pag.scaffoldBlock")) {
       localStorage.setItem("pag.scaffoldBlock", DEFAULT_SCAFFOLD_BLOCK);
     }
 
-    this.pag.scaffoldBlock = localStorage.getItem("pag.scaffoldBlock");
+    this.pag.scaffoldBlock.text = localStorage.getItem("pag.scaffoldBlock");
   },
 });
 
@@ -91,7 +99,6 @@ ipcRenderer.on("pag-image-info", (_, data) => {
 
 ipcRenderer.on("pag-state", (_, data) => {
   app.pag.state = { ...app.pag.state, ...data };
-  console.log(app.pag.state)
 });
 
 function parseConfig(t = "") {

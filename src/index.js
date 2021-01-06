@@ -125,7 +125,7 @@ const createWindow = async () => {
       pagState.current++;
     }
 
-    pagState.max = pagState.max + (img.getWidth() * img.getHeight() * 2);
+    pagState.max = pagState.max + (img.getWidth() * img.getHeight()) * 2;
     const outputPath = path.resolve(opts.outputPath);
 
     pagState.state = `Calculating color map..`;
@@ -136,10 +136,11 @@ const createWindow = async () => {
 
     pagState.state = `Appending first part..`;
     pagState.current++;
-    appendToFile(outputPath, "PAG", `{Occupants:[{ActorIdentifier:"minecraft:npc<>",SaveData:{Actions:"[{"button_name":"KILL-THE-ART-MACHINE","data":[{"cmd_line":"kill\t@e[type=npc,r=1]","cmd_ver":12}],"mode":0,"text":"","type":1},{"button_name":"BUILD-THE-PIXEL-ART","data":[`, true);
+    appendToFile(outputPath, "PAG", `{Occupants:[{ActorIdentifier:"minecraft:npc<>",SaveData:{Actions:"[{"button_name":"Die","data":[{"cmd_line":"kill\t@e[type=npc,r=1]","cmd_ver":12}],"mode":0,"text":"","type":1},{"button_name":"BuildAndDie","data":[`, true);
 
     pagState.state = `Starting to bake..`;
     pagState.current++;
+    let commandsUsed = 0;
     img.scan(0, 0, img.bitmap.width, img.bitmap.height, (x, y, index) => {
       setTimeout(() => {
         pagState.state = `Baking.. (${index}, ${x},${y})`;
@@ -153,7 +154,13 @@ const createWindow = async () => {
 
         const { name: blockIdAndMeta } = findNearestColor(pixelColorHEX);
 
-        appendToFile(outputPath, "PAG", `{"cmd_line":"setblock\\t~${x}\\t~1\\t~${y}\\t${blockIdAndMeta.replace(" ", "\\t")}","cmd_ver":12}${!isLastOne ? "," : ""}`);
+        if (blockIdAndMeta.startsWith("sand") || blockIdAndMeta.startsWith("gravel") || blockIdAndMeta.includes("powder")) {
+          appendToFile(outputPath, "PAG", `{"cmd_line":"setblock\\t~${x}\\t~\\t~${y}\\t${opts.scaffoldBlock.id}\\t${opts.scaffoldBlock.meta}","cmd_ver":12},`);
+          commandsUsed++;
+        }
+
+        appendToFile(outputPath, "PAG", `{"cmd_line":"setblock\\t~${x}\\t~1\\t~${y}\\t${blockIdAndMeta.replace(" ", "\\t")}","cmd_ver":12},`);
+        commandsUsed++;
 
         pagState.state = `Baked. (${index}, ${x},${y})`;
         pagState.current++;
@@ -162,7 +169,9 @@ const createWindow = async () => {
           pagState.state = `Appending last part..`;
           pagState.current++;
 
-          appendToFile(outputPath, "PAG", `],"mode":0,"text":"","type":1}]",CustomName:"Â§bArmagan's Stuff",InterativeText:"Thank you for using the Armagan's NBT App! Total ${index + 1} commands are used..", Variant:19,Ticking:1b,TicksLeftToStay:1}]}`, true);
+          appendToFile(outputPath, "PAG", `{"cmd_line":"kill\t@e[type=npc,r=1]","cmd_ver":12}],"mode":0,"text":"","type":1}]",CustomName:"Â§bArmagan's Stuff",InterativeText:"Thank you for using the Armagan's NBT App! Total ${commandsUsed} commands are used.. https://github.com/TheArmagan/armagansnbtapp", Variant:19,Ticking:1b,TicksLeftToStay:1}]}`, true);
+
+          commandsUsed = 0;
 
           let tokeTime = Date.now() - startTime;
           pagState.state = `Generated! (Took ${(tokeTime / 1000).toFixed(2)} seconds..)`;
