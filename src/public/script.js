@@ -24,6 +24,11 @@ const app = new Vue({
       },
       align: "horizontal"
     },
+    smb: {
+      file: null,
+      output: null,
+      includeAir: false
+    },
     settings: {
       collapseIndex: -1,
     },
@@ -53,6 +58,13 @@ const app = new Vue({
       app.pag.scaffoldBlock.object = parseConfig(text)[0];
       localStorage.setItem("pag.scaffoldBlock", text);
     }, 1000),
+
+    "smb.file"(file) {
+      if (file && !["schem", "schematic"].includes(getFileExt(file.name))) {
+        this.$buefy.toast.open("Input only can be SCHEMATIC file.");
+        this.smb.file = null;
+      }
+    },
   },
   methods: {
     quit() {
@@ -107,4 +119,8 @@ function parseConfig(t = "") {
     .map((j) =>
       Object.fromEntries(j.split(";").map((i) => i.split("=", 2)))
     );
+}
+
+function getFileExt(t = "") {
+  t.split("/").pop().split(/\?|\#/gm).shift().split(".").pop().toLowerCase();
 }

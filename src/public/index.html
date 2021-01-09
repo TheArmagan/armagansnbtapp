@@ -3,6 +3,20 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-QMYG5M88NQ"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-QMYG5M88NQ");
+    </script>
     <link
       rel="stylesheet"
       href="https://cdn.materialdesignicons.com/5.3.45/css/materialdesignicons.min.css"
@@ -76,16 +90,25 @@
               <div class="columns">
                 <div class="column is-half">
                   <b-field label="Dithering" label-position="on-border">
-                    <b-numberinput
-                      v-model="pag.ditherFactor"
-                      min="0"
-                      max="10"
-                    ></b-numberinput>
+                    <b-select v-model="pag.ditherFactor" expanded>
+                      <option value="0">Don't dither</option>
+                      <option value="AUTO" disabled>AUTO</option>
+                      <option value="1">Dither every 1 pixel</option>
+                      <option value="2">Dither every 2 pixel</option>
+                      <option value="3">Dither every 3 pixel</option>
+                      <option value="4">Dither every 4 pixel</option>
+                      <option value="5" selected>Dither every 5 pixel</option>
+                      <option value="6">Dither every 6 pixel</option>
+                      <option value="7">Dither every 7 pixel</option>
+                      <option value="8">Dither every 8 pixel</option>
+                      <option value="9">Dither every 9 pixel</option>
+                      <option value="10">Dither every 10 pixel</option>
+                    </b-select>
                   </b-field>
                 </div>
                 <div class="column is-half">
                   <b-field
-                    :label="`Scale Factor${pag.imageInfo ? ` (${Math.round(pag.scaleFactor*pag.imageInfo?.width)}x${Math.round(pag.scaleFactor*pag.imageInfo?.height)})` : ''}`"
+                    :label="`Scale Factor${pag.imageInfo ? ` (${Math.round(pag.scaleFactor*pag.imageInfo?.width)}x${Math.round(pag.scaleFactor*pag.imageInfo?.height)})` : ''}${pag.scaleFactor == 1 ? ' (Default)' : ''}`"
                     label-position="on-border"
                   >
                     <b-numberinput
@@ -152,6 +175,65 @@
           <b-tab-item label="SMB" icon="image-filter-hdr">
             <div class="content">
               <h1 class="subtitle">Schematic Generator</h1>
+
+              <div class="columns">
+                <div class="column is-half">
+                  <b-field
+                    class="file is-primary"
+                    :class="{'has-name': !!smb.file}"
+                  >
+                    <b-upload v-model="smb.file" class="file-label">
+                      <span class="file-cta">
+                        <b-icon
+                          class="file-icon"
+                          :icon="smb.file ? 'file-check' : 'upload'"
+                        ></b-icon>
+                        <span class="file-label"
+                          >{{smb.file ? "Selected" : "Select File"}}</span
+                        >
+                      </span>
+                      <span class="file-name" v-if="smb.file">
+                        {{ smb.file.name }}
+                      </span>
+                    </b-upload>
+                  </b-field>
+                </div>
+                <div class="column is-half">
+                  <b-field
+                    class="file is-primary"
+                    :class="{'has-name': !!smb.output}"
+                  >
+                    <b-upload v-model="smb.output" class="file-label">
+                      <span class="file-cta">
+                        <b-icon
+                          class="file-icon"
+                          :icon="smb.output ? 'file-check' : 'upload'"
+                        ></b-icon>
+                        <span class="file-label"
+                          >{{smb.output ? "Selected" : "Select Output"}}</span
+                        >
+                      </span>
+                      <span class="file-name" v-if="smb.output">
+                        {{ smb.output.name }}
+                      </span>
+                    </b-upload>
+                  </b-field>
+                </div>
+              </div>
+              <div class="columns">
+                <div class="column">
+                  <b-field>
+                    <b-switch v-model="smb.includeAir">
+                      Should Include Air Blocks?
+                    </b-switch>
+                  </b-field>
+                </div>
+              </div>
+            </div>
+          </b-tab-item>
+          <b-tab-item label="SBE" icon="square-edit-outline">
+            <div class="content">
+              <h1 class="subtitle">Sulker Box Editor</h1>
             </div>
           </b-tab-item>
           <b-tab-item label="Settings" icon="cog">
@@ -205,7 +287,6 @@
         </b-tabs>
       </main>
     </div>
-
     <script src="./lib/vue/vue2.js"></script>
     <script src="./lib/buefy/buefy.min.js"></script>
     <script src="./lib/lodash/lodash.min.js"></script>

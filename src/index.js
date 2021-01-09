@@ -7,6 +7,13 @@ const Jimp = require("jimp");
 const mcfsd = require("mcfsd");
 const stuffs = require("stuffs");
 const nearestColor = require("nearest-color");
+const { FileAppender } = require("./FileAppender");
+const { Appender } = require("./Appender");
+const { Schematic } = require('prismarine-schematic');
+const { Vec3 } = require("vec3");
+const MinecraftData = require("minecraft-data");
+const legacyData = require("./legacyBlockData.json");
+const mcData12 = MinecraftData("1.12");
 
 process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true"
 process.env.PORT = process.env.PORT || 8987;
@@ -17,17 +24,7 @@ if (require("electron-squirrel-startup")) { // eslint-disable-line global-requir
   app.quit();
 }
 
-let appendMem = {
-  PAG: []
-}
-
-function appendToFile(path = "", memName = "", data = "", forceSave = false) {
-  appendMem[memName].push(data);
-  if (appendMem[memName].length > 2048 || forceSave) {
-    fs.appendFileSync(path, appendMem[memName].join(""), "utf8");
-    appendMem[memName].length = 0;
-  }
-}
+const appender = new FileAppender(["PAG"]);
 
 const createWindow = async () => {
 
@@ -98,7 +95,7 @@ const createWindow = async () => {
 
     let clientUpdater = setInterval(() => {
       mainWindow.webContents.send("pag-state", pagState);
-    }, 75)
+    }, 100)
 
 
     pagState.state = `Reading the image file..`;
@@ -118,15 +115,18 @@ const createWindow = async () => {
     }
 
     if (opts.ditherFactor != 0) {
-      pagState.state = `Dithering..`;
+      pagState.state = `Dithering.. (Takes some time)`;
       pagState.current++;
       img = await Jimp.create(mcfsd(img.bitmap, opts.ditherFactor));
       pagState.state = "Dithered..";
       pagState.current++;
     }
 
-    pagState.max = pagState.max + (img.getWidth() * img.getHeight()) * 2;
+    pagState.max = pagState.max + (img.getWidth() * img.getHeight());
     const outputPath = path.resolve(opts.outputPath);
+
+    const a = new Appender(outputPath); // bu şek,şde yapmam gerekiyordu çünkü context hataları yüzünden..
+    const { append } = a;
 
     pagState.state = `Calculating color map..`;
     pagState.current++;
@@ -136,14 +136,16 @@ const createWindow = async () => {
 
     pagState.state = `Appending first part..`;
     pagState.current++;
-    appendToFile(outputPath, "PAG", `{Occupants:[{ActorIdentifier:"minecraft:npc<>",SaveData:{Actions:"[{"button_name":"Die","data":[{"cmd_line":"kill\t@e[type=npc,r=1]","cmd_ver":12}],"mode":0,"text":"","type":1},{"button_name":"BuildAndDie","data":[`, true);
+
+    append(`{Occupants:[{ActorIdentifier:"minecraft:npc<>",SaveData:{Actions:"[{"button_name":"Die","data":[{"cmd_line":"kill\\t@e[type=npc,r=1]","cmd_ver":12}],"mode":0,"text":"","type":1},{"button_name":"BuildAndDie","data":[`, true);
+
 
     pagState.state = `Starting to bake..`;
     pagState.current++;
     let commandsUsed = 0;
     img.scan(0, 0, img.bitmap.width, img.bitmap.height, (x, y, index) => {
       setTimeout(() => {
-        pagState.state = `Baking.. (${index}, ${x},${y})`;
+        pagState.state = `Baking.. (${index}, ${x}, ${y})`;
         pagState.current++;
 
         const isLastOne = x == img.bitmap.width - 1 && y == img.bitmap.height - 1;
@@ -155,21 +157,19 @@ const createWindow = async () => {
         const { name: blockIdAndMeta } = findNearestColor(pixelColorHEX);
 
         if (blockIdAndMeta.startsWith("sand") || blockIdAndMeta.startsWith("gravel") || blockIdAndMeta.includes("powder")) {
-          appendToFile(outputPath, "PAG", `{"cmd_line":"setblock\\t~${x}\\t~\\t~${y}\\t${opts.scaffoldBlock.id}\\t${opts.scaffoldBlock.meta}","cmd_ver":12},`);
+          append(`{"cmd_line":"setblock\\t~${x}\\t~\\t~${y}\\t${opts.scaffoldBlock.id}\\t${opts.scaffoldBlock.meta}","cmd_ver":12},`);
           commandsUsed++;
         }
 
-        appendToFile(outputPath, "PAG", `{"cmd_line":"setblock\\t~${x}\\t~1\\t~${y}\\t${blockIdAndMeta.replace(" ", "\\t")}","cmd_ver":12},`);
+        append(`{"cmd_line":"setblock\\t~${x}\\t~1\\t~${y}\\t${blockIdAndMeta.replace(" ", "\\t")}","cmd_ver":12},`);
         commandsUsed++;
-
-        pagState.state = `Baked. (${index}, ${x},${y})`;
-        pagState.current++;
 
         if (isLastOne) {
           pagState.state = `Appending last part..`;
           pagState.current++;
 
-          appendToFile(outputPath, "PAG", `{"cmd_line":"kill\t@e[type=npc,r=1]","cmd_ver":12}],"mode":0,"text":"","type":1}]",CustomName:"Â§bArmagan's Stuff",InterativeText:"Thank you for using the Armagan's NBT App! Total ${commandsUsed} commands are used.. https://github.com/TheArmagan/armagansnbtapp", Variant:19,Ticking:1b,TicksLeftToStay:1}]}`, true);
+          append(`{"cmd_line":"kill\\t@e[type=npc,r=1]","cmd_ver":12}],"mode":0,"text":"","type":1}]",CustomName:"Â§bArmagan's Stuff",InterativeText:"[PAG] Thank you for using the Armagan's NBT App! Total ${commandsUsed} commands are used.. https://github.com/TheArmagan/armagansnbtapp",Variant:19,Ticking:1b,TicksLeftToStay:1}]}`, true);
+
 
           commandsUsed = 0;
 
@@ -180,8 +180,45 @@ const createWindow = async () => {
 
           setTimeout(() => { clearInterval(clientUpdater); }, 5000);
         }
-      }, index / 1000)
+      }, index / 500)
     })
+  })
+
+  ipcMain.on("smb-start", async (_, opts) => {
+
+    const schematic = await Schematic.read(await fs.readFile(path.resolve(opts.filePath)));
+
+    /** @type {Vec3} */
+    const offsetPos = schematic.offset.clone();
+
+    /** @type {Vec3} */
+    const endPos = schematic.end().clone();
+
+    const a = new Appender(path.resolve(opts.outputPath));
+    const { append } = a;
+
+    let blocksUsed = 0;
+
+    append(`{Occupants:[{ActorIdentifier:"minecraft:npc<>",SaveData:{Actions:"[{"button_name":"Die","data":[{"cmd_line":"kill\\t@e[type=npc,r=1]","cmd_ver":12}],"mode":0,"text":"","type":1},{"button_name":"BuildAndDie","data":[`, true);
+
+    for (let x = 0; x < endPos.x - offsetPos.x; x++) {
+      for (let y = 0; y < endPos.y - offsetPos.y; y++) {
+        for (let z = 0; z < endPos.z - offsetPos.z; z++) {
+          const block = schematic.getBlock(new Vec3(x + offsetPos.x, y + offsetPos.y, z + offsetPos.z));
+
+          if (!opts.includeAir && block.name.toLowerCase() == "air") break;
+
+          const _find = legacyData.find(i => i[1].toLowerCase() == block.name.toLowerCase()) || [];
+          const [id, meta] = _find[0]?.split(":") || [];
+          let { name } = mcData12.blocksArray.find(i => i.id == id && (meta == 0 || i.variations?.some(j => j.metadata == meta))) || mcData12.blocksArray.find(i => i.id == id);
+          blocksUsed++;
+
+          append(`{"cmd_line":"setblock\\t~${x}\\t~${y}\\t~${z}\\t${name}\\t${meta}","cmd_ver":12},`);
+        }
+      }
+    }
+
+    append(`{"cmd_line":"kill\\t@e[type=npc,r=1]","cmd_ver":12}],"mode":0,"text":"","type":1}]",CustomName:"Â§bArmagan's Stuff",InterativeText:"[SMB] Thank you for using the Armagan's NBT App! Total ${blocksUsed} blocks are used.. https://github.com/TheArmagan/armagansnbtapp",Variant:19,Ticking:1b,TicksLeftToStay:1}]}`, true);
   })
 };
 
