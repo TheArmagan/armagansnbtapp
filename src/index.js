@@ -174,6 +174,8 @@ const createWindow = async () => {
     const startTime = Date.now();
     const state = stater.get("smb", true);
 
+    state.running = true;
+
     state.state = "Reading schematic..";
     state.current++;
     const schematic = await Schematic.read(await fs.promises.readFile(path.resolve(opts.filePath)));
@@ -230,11 +232,11 @@ const createWindow = async () => {
                     state.current = state.max;
                     state.running = false;
                   }
-                }, z / 500)
+                }, z / 250)
               }
-            }, y / 500)
+            }, y / 250)
           }
-        }, x / 500)
+        }, x / 250)
       }
     })
 
