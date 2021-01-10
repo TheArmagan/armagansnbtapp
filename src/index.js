@@ -1,19 +1,19 @@
-const { app, BrowserWindow, ipcMain, dialog } = require("electron");
-const path = require("path");
-const express = require("express");
-const expressApp = express();
-const fs = require("fs");
-const Jimp = require("jimp");
-const mcfsd = require("mcfsd");
-const stuffs = require("stuffs");
-const nearestColor = require("nearest-color");
-const { Appender } = require("./Appender");
-const { Schematic } = require('prismarine-schematic');
-const { Vec3 } = require("vec3");
-const MinecraftData = require("minecraft-data");
-const legacyData = require("./legacyBlockData.json");
-const { StateManager } = require("./StateManager");
-const mcData12 = MinecraftData("1.12");
+let { app, BrowserWindow, ipcMain, dialog } = require("electron");
+let path = require("path");
+let express = require("express");
+let expressApp = express();
+let fs = require("fs");
+let Jimp = require("jimp");
+let mcfsd = require("mcfsd");
+let stuffs = require("stuffs");
+let nearestColor = require("nearest-color");
+let { Appender } = require("./Appender");
+let { Schematic } = require('prismarine-schematic');
+let { Vec3 } = require("vec3");
+let MinecraftData = require("minecraft-data");
+let legacyData = require("./legacyBlockData.json");
+let { StateManager } = require("./StateManager");
+let mcData12 = MinecraftData("1.12");
 
 process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true"
 process.env.PORT = process.env.PORT || 8987;
@@ -24,9 +24,9 @@ if (require("electron-squirrel-startup")) { // eslint-disable-line global-requir
   app.quit();
 }
 
-const createWindow = async () => {
+let createWindow = async () => {
 
-  const mainWindow = new BrowserWindow({
+  let mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     maximizable: false,
@@ -69,7 +69,7 @@ const createWindow = async () => {
   });
 
 
-  const stater = new StateManager((newState) => {
+  let stater = new StateManager((newState) => {
     mainWindow.webContents.send("state", newState);
   }, {
     running: false,
@@ -82,8 +82,8 @@ const createWindow = async () => {
   ipcMain.on("pag-start", async (_, opts) => {
     if (stater.get("pag").running) return;
 
-    const startTime = Date.now();
-    const state = stater.get("pag", true);
+    let startTime = Date.now();
+    let state = stater.get("pag", true);
 
     state.running = true;
 
@@ -111,15 +111,15 @@ const createWindow = async () => {
     }
 
     state.max = state.max + (img.getWidth() * img.getHeight());
-    const outputPath = path.resolve(opts.outputPath);
+    let outputPath = path.resolve(opts.outputPath);
 
-    const a = new Appender(outputPath);
+    let a = new Appender(outputPath);
 
     state.state = `Calculating color map..`;
     state.current++;
 
-    //const findNearestColor = nearestColor.from(Object.fromEntries(opts.colorMap.map(i => ([`${i.id} ${i.meta}`, opts.align == "vertical" ? i.topColor : i.sideColor]))));
-    const findNearestColor = nearestColor.from(Object.fromEntries(opts.colorMap.map(i => ([`${i.id} ${i.meta}`, i.topColor]))));
+    //let findNearestColor = nearestColor.from(Object.fromEntries(opts.colorMap.map(i => ([`${i.id} ${i.meta}`, opts.align == "vertical" ? i.topColor : i.sideColor]))));
+    let findNearestColor = nearestColor.from(Object.fromEntries(opts.colorMap.map(i => ([`${i.id} ${i.meta}`, i.topColor]))));
 
     state.state = `Appending first part..`;
     state.current++;
@@ -135,13 +135,13 @@ const createWindow = async () => {
         state.state = `Baking.. (${index}, ${x}, ${y})`;
         state.current++;
 
-        const isLastOne = x == img.bitmap.width - 1 && y == img.bitmap.height - 1;
+        let isLastOne = x == img.bitmap.width - 1 && y == img.bitmap.height - 1;
 
-        const pixelColorINT = img.getPixelColor(x, y);
-        const pixelColorRGBA = stuffs.intToRgba(pixelColorINT);
-        const pixelColorHEX = stuffs.rgbToHex(pixelColorRGBA.r, pixelColorRGBA.g, pixelColorRGBA.b);
+        let pixelColorINT = img.getPixelColor(x, y);
+        let pixelColorRGBA = stuffs.intToRgba(pixelColorINT);
+        let pixelColorHEX = stuffs.rgbToHex(pixelColorRGBA.r, pixelColorRGBA.g, pixelColorRGBA.b);
 
-        const { name: blockIdAndMeta } = findNearestColor(pixelColorHEX);
+        let { name: blockIdAndMeta } = findNearestColor(pixelColorHEX);
 
         if (blockIdAndMeta.startsWith("sand") || blockIdAndMeta.startsWith("gravel") || blockIdAndMeta.includes("powder")) {
           a.append(`{"cmd_line":"setblock\\t~${x}\\t~\\t~${y}\\t${opts.scaffoldBlock.id}\\t${opts.scaffoldBlock.meta}","cmd_ver":12},`);
@@ -158,6 +158,8 @@ const createWindow = async () => {
           a.append(`{"cmd_line":"kill\\t@e[type=npc,r=1]","cmd_ver":12}],"mode":0,"text":"","type":1}]",CustomName:"Â§bArmagan's Stuff",InterativeText:"[PAG] Thank you for using the Armagan's NBT App! Total ${commandsUsed} commands are used.. https://github.com/TheArmagan/armagansnbtapp",Variant:19,Ticking:1b,TicksLeftToStay:1}]}`, true);
 
           commandsUsed = 0;
+          img = 0;
+          a = 0;
 
           let tokeTime = Date.now() - startTime;
           state.state = `Baked! (Took ${(tokeTime / 1000).toFixed(2)} seconds..)`;
@@ -171,28 +173,28 @@ const createWindow = async () => {
   ipcMain.on("smb-start", async (_, opts) => {
     if (stater.get("smb").running) return;
 
-    const startTime = Date.now();
-    const state = stater.get("smb", true);
+    let startTime = Date.now();
+    let state = stater.get("smb", true);
 
     state.running = true;
 
     state.state = "Reading schematic..";
     state.current++;
-    const schematic = await Schematic.read(await fs.promises.readFile(path.resolve(opts.filePath)));
+    let schematic = await Schematic.read(await fs.promises.readFile(path.resolve(opts.filePath)));
     state.state = "Read..";
     state.current++;
 
     /** @type {Vec3} */
-    const offsetPos = schematic.offset.clone();
+    let offsetPos = schematic.offset.clone();
 
     /** @type {Vec3} */
-    const endPos = schematic.end().clone();
+    let endPos = schematic.end().clone();
 
-    const a = new Appender(path.resolve(opts.outputPath));
+    let a = new Appender(path.resolve(opts.outputPath));
 
     let blocksUsed = 0;
 
-    state.state = "Appending first part..";
+    state.state = "Appending first part.. (Takes long time)";
     a.append(`{Occupants:[{ActorIdentifier:"minecraft:npc<>",SaveData:{Actions:"[{"button_name":"Die","data":[{"cmd_line":"kill\\t@e[type=npc,r=1]","cmd_ver":12}],"mode":0,"text":"","type":1},{"button_name":"BuildAndDie","data":[`, true);
     state.current++;
 
@@ -201,42 +203,39 @@ const createWindow = async () => {
     state.current++;
     process.nextTick(() => {
       for (let x = 0; x < endPos.x - offsetPos.x; x++) {
-        setTimeout(() => {
-          for (let y = 0; y < endPos.y - offsetPos.y; y++) {
-            setTimeout(() => {
-              for (let z = 0; z < endPos.z - offsetPos.z; z++) {
-                setTimeout(() => {
-                  const block = schematic.getBlock(new Vec3(x + offsetPos.x, y + offsetPos.y, z + offsetPos.z));
+        for (let y = 0; y < endPos.y - offsetPos.y; y++) {
+          for (let z = 0; z < endPos.z - offsetPos.z; z++) {
+            let block = schematic.getBlock(new Vec3(x + offsetPos.x, y + offsetPos.y, z + offsetPos.z));
+            state.state = `Baking.. (${blocksUsed}, ${x}, ${y}, ${z})`;
+            state.current++;
 
-                  state.state = `Baking.. (${blocksUsed}, ${x}, ${y}, ${z})`;
-                  state.current++;
+            if (!opts.ignoreList.includes(block.name.toLowerCase())) {
+              blocksUsed++;
 
-                  if (!opts.ignoreList.includes(block.name.toLowerCase())) {
-                    blocksUsed++;
-
-                    const _find = legacyData.find(i => i[1].toLowerCase() == block.name.toLowerCase()) || [];
-                    const [id, meta] = _find[0]?.split(":") || [];
-                    let { name } = mcData12.blocksArray.find(i => i.id == id && (meta == 0 || i.variations?.some(j => j.metadata == meta))) || mcData12.blocksArray.find(i => i.id == id);
+              let _find = legacyData.find(i => i[1].toLowerCase() == block.name.toLowerCase()) || [];
+              let [id, meta] = _find[0]?.split(":") || [];
+              let { name } = mcData12.blocksArray.find(i => i.id == id && (meta == 0 || i.variations?.some(j => j.metadata == meta))) || mcData12.blocksArray.find(i => i.id == id);
 
 
-                    a.append(`{"cmd_line":"setblock\\t~${x}\\t~${y}\\t~${z}\\t${name}\\t${meta}","cmd_ver":12},`);
-                  }
+              a.append(`{"cmd_line":"setblock\\t~${x}\\t~${y}\\t~${z}\\t${name}\\t${meta}","cmd_ver":12},`);
+            }
 
-                  if (x == endPos.x - offsetPos.x - 1 && y == endPos.y - offsetPos.y - 1 && endPos.z - offsetPos.z - 1) {
-                    state.state = "Appending last part..";
-                    a.append(`{"cmd_line":"kill\\t@e[type=npc,r=1]","cmd_ver":12}],"mode":0,"text":"","type":1}]",CustomName:"Â§bArmagan's Stuff",InterativeText:"[SMB] Thank you for using the Armagan's NBT App! Total ${blocksUsed} blocks are used.. https://github.com/TheArmagan/armagansnbtapp",Variant:19,Ticking:1b,TicksLeftToStay:1}]}`, true);
-                    blocksUsed++;
+            if (x == endPos.x - offsetPos.x - 1 && y == endPos.y - offsetPos.y - 1 && endPos.z - offsetPos.z - 1) {
+              state.state = "Appending last part..";
+              a.append(`{"cmd_line":"kill\\t@e[type=npc,r=1]","cmd_ver":12}],"mode":0,"text":"","type":1}]",CustomName:"Â§bArmagan's Stuff",InterativeText:"[SMB] Thank you for using the Armagan's NBT App! Total ${blocksUsed} blocks are used.. https://github.com/TheArmagan/armagansnbtapp",Variant:19,Ticking:1b,TicksLeftToStay:1}]}`, true);
+              blocksUsed++;
 
-                    const tokeTime = Date.now() - startTime;
-                    state.state = `Baked! (Took ${(tokeTime / 1000).toFixed(2)} seconds..)`;
-                    state.current = state.max;
-                    state.running = false;
-                  }
-                }, z / 100)
-              }
-            }, y / 100)
+              let tokeTime = Date.now() - startTime;
+              state.state = `Baked! (Took ${(tokeTime / 1000).toFixed(2)} seconds..)`;
+              state.current = state.max;
+              state.running = false;
+
+              schematic = 0;
+              offsetPos = 0;
+              endPos = 0;
+            }
           }
-        }, x / 100)
+        }
       }
     })
 
