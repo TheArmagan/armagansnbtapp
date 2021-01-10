@@ -92,3 +92,5 @@ id=red_glazed_terracotta;meta=0;topColor=#AE2D26
 id=yellow_glazed_terracotta;meta=0;topColor=#F1AF13`;
 
 const DEFAULT_SCAFFOLD_BLOCK = `id=stone;meta=0`;
+
+const DEFAULT_IGNORED_BLOCK_LIST = `air`;

@@ -211,7 +211,7 @@ const createWindow = async () => {
                   state.state = `Baking.. (${blocksUsed}, ${x}, ${y}, ${z})`;
                   state.current++;
 
-                  if (block.name.toLowerCase() != "air") {
+                  if (!opts.ignoreList.includes(block.name.toLowerCase())) {
                     blocksUsed++;
 
                     const _find = legacyData.find(i => i[1].toLowerCase() == block.name.toLowerCase()) || [];
@@ -232,11 +232,11 @@ const createWindow = async () => {
                     state.current = state.max;
                     state.running = false;
                   }
-                }, z / 250)
+                }, z / 100)
               }
-            }, y / 250)
+            }, y / 100)
           }
-        }, x / 250)
+        }, x / 100)
       }
     })
 

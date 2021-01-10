@@ -35,6 +35,10 @@ const app = new Vue({
         current: 0,
         state: "...",
       },
+      ignoreList: {
+        text: "",
+        object: {}
+      }
     },
     settings: {
       collapseIndex: -1,
@@ -71,8 +75,11 @@ const app = new Vue({
     "pag.scaffoldBlock.text": _.debounce((text) => {
       app.pag.scaffoldBlock.object = parseConfig(text)[0];
       localStorage.setItem("pag.scaffoldBlock", text);
-    }, 1000),
-
+    }, 100),
+    "smb.ignoreList.text": _.debounce((text) => {
+      app.smb.ignoreList.object = text.toLowerCase().split(",");
+      localStorage.setItem("smb.ignoreList", text);
+    }, 100),
     "smb.file"(file) {
       if (file && !["schem", "schematic"].includes(getFileExt(file.name))) {
         console.log(getFileExt(file.name))
@@ -85,7 +92,20 @@ const app = new Vue({
         this.$buefy.toast.open({ message: "Output only can be TXT file!", type: "is-danger" });
         this.smb.output = null;
       }
-    }
+    },
+    "smb.output"(file) {
+      if (file) {
+        if (file.type != "text/plain") {
+          this.$buefy.toast.open({ message: "Output only can be TXT file!", type: "is-danger" });
+          this.smb.output = null;
+          return;
+        }
+
+        if (file.size != 0) {
+          app.$buefy.toast.open({ message: "Selected output file is not blank.", type: "is-warning" })
+        }
+      }
+    },
   },
   methods: {
     quit() {
@@ -107,6 +127,7 @@ const app = new Vue({
         filePath: this.smb.file?.path,
         outputPath: this.smb.output?.path,
         includeAir: this.smb.includeAir,
+        ignoreList: this.smb.ignoreList.object
       });
     }
   },
@@ -122,6 +143,12 @@ const app = new Vue({
     }
 
     this.pag.scaffoldBlock.text = localStorage.getItem("pag.scaffoldBlock");
+
+    if (!localStorage.getItem("smb.ignoreList")) {
+      localStorage.setItem("smb.ignoreList", DEFAULT_IGNORED_BLOCK_LIST);
+    }
+
+    this.smb.ignoreList.text = localStorage.getItem("smb.ignoreList");
   },
 });
 

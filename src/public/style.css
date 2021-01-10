@@ -137,3 +137,7 @@ main {
   opacity: 0.4;
   pointer-events: none;
 }
+
+.collapse.card {
+  margin-bottom: 22px;
+}

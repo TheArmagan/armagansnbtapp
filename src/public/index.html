@@ -262,11 +262,6 @@
               </div>
             </div>
           </b-tab-item>
-          <b-tab-item label="SBE" icon="square-edit-outline">
-            <div class="content">
-              <h1 class="subtitle">Sulker Box Editor</h1>
-            </div>
-          </b-tab-item>
           <b-tab-item label="Settings" icon="cog">
             <div class="content">
               <h1 class="subtitle">Settings</h1>
@@ -310,6 +305,39 @@
                       >
                       </b-input>
                     </b-field>
+                  </div>
+                </div>
+              </b-collapse>
+
+              <b-collapse
+                class="card"
+                animation="slide"
+                :open="settings.collapseIndex == 'smb'"
+                @open="settings.collapseIndex = 'smb'"
+              >
+                <div
+                  slot="trigger"
+                  slot-scope="props"
+                  class="card-header"
+                  role="button"
+                >
+                  <h3 class="card-header-title">Schematic Builder</h3>
+                  <a class="card-header-icon">
+                    <b-icon :icon="props.open ? 'menu-down' : 'menu-up'">
+                    </b-icon>
+                  </a>
+                </div>
+                <div class="card-content">
+                  <div class="content">
+                    <b-field label="Block Ignore List">
+                      <b-input
+                        type="textarea"
+                        minlength="0"
+                        maxlength="16384"
+                        placeholder="air,stone"
+                        v-model="smb.ignoreList.text"
+                      >
+                      </b-input>
                   </div>
                 </div>
               </b-collapse>
