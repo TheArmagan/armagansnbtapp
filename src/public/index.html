@@ -137,7 +137,7 @@
             </div>
             <div
               class="start-buttons"
-              :class="{'disabled': !isPAGReadyToStart}"
+              :class="{'disabled': (!pag.file || !pag.output)}"
             >
               <b-progress
                 :value="pag.state.current"
@@ -166,7 +166,7 @@
                 </div>
               </div>
             </div>
-            <div class="image-info" v-if="pag.imageInfo">
+            <div class="statistics" v-if="pag.imageInfo">
               <p>{{pag.imageInfo?.width * pag.imageInfo?.height}} blocks</p>
               <p>{{pag.imageInfo?.width}}x{{pag.imageInfo?.height}}</p>
               <p>{{Math.ceil(pag.imageInfo?.size / 1024)}}KB</p>
@@ -174,7 +174,7 @@
           </b-tab-item>
           <b-tab-item label="SMB" icon="image-filter-hdr">
             <div class="content">
-              <h1 class="subtitle">Schematic Generator</h1>
+              <h1 class="subtitle">Schematic Builder</h1>
 
               <div class="columns">
                 <div class="column is-half">
@@ -220,13 +220,44 @@
                   </b-field>
                 </div>
               </div>
-              <div class="columns">
+              <!-- <div class="columns">
                 <div class="column">
                   <b-field>
                     <b-switch v-model="smb.includeAir">
                       Should Include Air Blocks?
                     </b-switch>
                   </b-field>
+                </div>
+              </div> -->
+              <div
+                class="start-buttons"
+                :class="{'disabled': (!this.smb.file || !this.smb.output)}"
+              >
+                <b-progress
+                  :value="smb.state.current"
+                  show-value
+                  :max="smb.state.max"
+                  type="is-info"
+                >
+                  <span style="color: black"
+                    >{{smb.state.current}}/{{smb.state.max}}</span
+                  ></b-progress
+                >
+                <div class="columns">
+                  <div class="column">
+                    <b-button
+                      type="is-primary"
+                      style="width: 100%"
+                      :loading="smb.state.running"
+                      @click="smbStart"
+                      >Generate</b-button
+                    >
+                  </div>
+                  <div class="column is-two-fifths">
+                    <b-button type="is-primary is-static" style="width: 100%"
+                      >{{smb.state.state}}</b-button
+                    >
+                  </div>
                 </div>
               </div>
             </div>

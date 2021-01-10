@@ -113,7 +113,7 @@ main {
   border: transparent;
 }
 
-.image-info {
+.statistics {
   overflow: hidden;
   position: absolute;
   word-wrap: break-word;
@@ -137,7 +137,3 @@ main {
   opacity: 0.4;
   pointer-events: none;
 }
-
-/* .tabs .icon {
-  margin-right: 0 !important;
-} */

@@ -27,7 +27,14 @@ const app = new Vue({
     smb: {
       file: null,
       output: null,
-      includeAir: false
+      includeAir: false,
+      schematicInfo: null,
+      state: {
+        running: false,
+        max: 100,
+        current: 0,
+        state: "...",
+      },
     },
     settings: {
       collapseIndex: -1,
@@ -36,7 +43,7 @@ const app = new Vue({
   watch: {
     "pag.file"(file) {
       if (file && file.type != "image/jpeg") {
-        this.$buefy.toast.open("Input only can be JPG file.");
+        this.$buefy.toast.open({ message: "Input only can be JPG file.", type: "is-danger" });
         this.pag.file = null;
         this.pag.imageInfo = null;
       } else {
@@ -45,9 +52,16 @@ const app = new Vue({
       }
     },
     "pag.output"(file) {
-      if (file && file.type != "text/plain") {
-        this.$buefy.toast.open("Output only can be TXT file!");
-        this.pag.output = null;
+      if (file) {
+        if (file.type != "text/plain") {
+          this.$buefy.toast.open({ message: "Output only can be TXT file!", type: "is-danger" });
+          this.pag.output = null;
+          return;
+        }
+
+        if (file.size != 0) {
+          app.$buefy.toast.open({ message: "Selected output file is not blank.", type: "is-warning" })
+        }
       }
     },
     "pag.colorMap.text": _.debounce((text) => {
@@ -61,10 +75,17 @@ const app = new Vue({
 
     "smb.file"(file) {
       if (file && !["schem", "schematic"].includes(getFileExt(file.name))) {
-        this.$buefy.toast.open("Input only can be SCHEMATIC file.");
+        console.log(getFileExt(file.name))
+        this.$buefy.toast.open({ message: "Input only can be SCHEMATIC file.", type: "is-danger" });
         this.smb.file = null;
       }
     },
+    "smb.output"(file) {
+      if (file && file.type != "text/plain") {
+        this.$buefy.toast.open({ message: "Output only can be TXT file!", type: "is-danger" });
+        this.smb.output = null;
+      }
+    }
   },
   methods: {
     quit() {
@@ -79,13 +100,15 @@ const app = new Vue({
         colorMap: this.pag.colorMap.object,
         align: this.pag.align,
         scaffoldBlock: this.pag.scaffoldBlock.object
-      })
-    }
-  },
-  computed: {
-    isPAGReadyToStart() {
-      return !(!this.pag.file || !this.pag.output);
+      });
     },
+    smbStart() {
+      ipcRenderer.send("smb-start", {
+        filePath: this.smb.file?.path,
+        outputPath: this.smb.output?.path,
+        includeAir: this.smb.includeAir,
+      });
+    }
   },
   mounted() {
     if (!localStorage.getItem("pag.colorMap")) {
@@ -109,8 +132,10 @@ ipcRenderer.on("pag-image-info", (_, data) => {
   app.pag.imageInfo.size = app.pag.file.size;
 });
 
-ipcRenderer.on("pag-state", (_, data) => {
-  app.pag.state = { ...app.pag.state, ...data };
+ipcRenderer.on("state", (_, data) => {
+  data.forEach(([STATE_NAME, STATE_DATA]) => {
+    app[STATE_NAME].state = STATE_DATA;
+  });
 });
 
 function parseConfig(t = "") {
@@ -122,5 +147,5 @@ function parseConfig(t = "") {
 }
 
 function getFileExt(t = "") {
-  t.split("/").pop().split(/\?|\#/gm).shift().split(".").pop().toLowerCase();
+  return t.split("/").pop().split(/\?|\#/gm).shift().split(".").pop().toLowerCase();
 }

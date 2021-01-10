@@ -7,12 +7,12 @@ const Jimp = require("jimp");
 const mcfsd = require("mcfsd");
 const stuffs = require("stuffs");
 const nearestColor = require("nearest-color");
-const { FileAppender } = require("./FileAppender");
 const { Appender } = require("./Appender");
 const { Schematic } = require('prismarine-schematic');
 const { Vec3 } = require("vec3");
 const MinecraftData = require("minecraft-data");
 const legacyData = require("./legacyBlockData.json");
+const { StateManager } = require("./StateManager");
 const mcData12 = MinecraftData("1.12");
 
 process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true"
@@ -23,8 +23,6 @@ expressApp.use(express.static(path.resolve(__dirname, "public")));
 if (require("electron-squirrel-startup")) { // eslint-disable-line global-require
   app.quit();
 }
-
-const appender = new FileAppender(["PAG"]);
 
 const createWindow = async () => {
 
@@ -70,83 +68,72 @@ const createWindow = async () => {
     img = 0;
   });
 
-  let pagState = {
+
+  const stater = new StateManager((newState) => {
+    mainWindow.webContents.send("state", newState);
+  }, {
     running: false,
     max: 100,
     current: 0,
     state: "...",
-  };
+  }, 250);
 
 
   ipcMain.on("pag-start", async (_, opts) => {
-    if (pagState.running) return;
+    if (stater.get("pag").running) return;
 
-    let startTime = Date.now();
+    const startTime = Date.now();
+    const state = stater.get("pag", true);
 
-    pagState = {
-      running: false,
-      max: 100,
-      current: 0,
-      state: "...",
-    };
+    state.running = true;
 
-    pagState.running = true;
-    pagState.current++;
-
-    let clientUpdater = setInterval(() => {
-      mainWindow.webContents.send("pag-state", pagState);
-    }, 100)
-
-
-    pagState.state = `Reading the image file..`;
-    pagState.current++;
+    state.state = `Reading the image file..`;
+    state.current++;
     let img = await Jimp.read(path.resolve(opts.filePath));
-    pagState.state = "Readd..";
-    pagState.current++;
+    state.state = "Readd..";
+    state.current++;
 
 
     if (opts.scaleFactor != 1) {
-      pagState.state = `Scaling..`;
-      pagState.current++;
+      state.state = `Scaling..`;
+      state.current++;
       await img.scale(opts.scaleFactor);
-      pagState.state = "Scaled..";
-      pagState.current++;
-
+      state.state = "Scaled..";
+      state.current++;
     }
 
     if (opts.ditherFactor != 0) {
-      pagState.state = `Dithering.. (Takes some time)`;
-      pagState.current++;
+      state.state = `Dithering.. (Takes some time)`;
+      state.current++;
       img = await Jimp.create(mcfsd(img.bitmap, opts.ditherFactor));
-      pagState.state = "Dithered..";
-      pagState.current++;
+      state.state = "Dithered..";
+      state.current++;
     }
 
-    pagState.max = pagState.max + (img.getWidth() * img.getHeight());
+    state.max = state.max + (img.getWidth() * img.getHeight());
     const outputPath = path.resolve(opts.outputPath);
 
-    const a = new Appender(outputPath); // bu şek,şde yapmam gerekiyordu çünkü context hataları yüzünden..
-    const { append } = a;
+    const a = new Appender(outputPath);
 
-    pagState.state = `Calculating color map..`;
-    pagState.current++;
+    state.state = `Calculating color map..`;
+    state.current++;
 
     //const findNearestColor = nearestColor.from(Object.fromEntries(opts.colorMap.map(i => ([`${i.id} ${i.meta}`, opts.align == "vertical" ? i.topColor : i.sideColor]))));
     const findNearestColor = nearestColor.from(Object.fromEntries(opts.colorMap.map(i => ([`${i.id} ${i.meta}`, i.topColor]))));
 
-    pagState.state = `Appending first part..`;
-    pagState.current++;
+    state.state = `Appending first part..`;
+    state.current++;
 
-    append(`{Occupants:[{ActorIdentifier:"minecraft:npc<>",SaveData:{Actions:"[{"button_name":"Die","data":[{"cmd_line":"kill\\t@e[type=npc,r=1]","cmd_ver":12}],"mode":0,"text":"","type":1},{"button_name":"BuildAndDie","data":[`, true);
+    a.append(`{Occupants:[{ActorIdentifier:"minecraft:npc<>",SaveData:{Actions:"[{"button_name":"Die","data":[{"cmd_line":"kill\\t@e[type=npc,r=1]","cmd_ver":12}],"mode":0,"text":"","type":1},{"button_name":"BuildAndDie","data":[`, true);
 
 
-    pagState.state = `Starting to bake..`;
-    pagState.current++;
+    state.state = `Starting to bake..`;
+    state.current++;
     let commandsUsed = 0;
     img.scan(0, 0, img.bitmap.width, img.bitmap.height, (x, y, index) => {
       setTimeout(() => {
-        pagState.state = `Baking.. (${index}, ${x}, ${y})`;
-        pagState.current++;
+        state.state = `Baking.. (${index}, ${x}, ${y})`;
+        state.current++;
 
         const isLastOne = x == img.bitmap.width - 1 && y == img.bitmap.height - 1;
 
@@ -157,36 +144,41 @@ const createWindow = async () => {
         const { name: blockIdAndMeta } = findNearestColor(pixelColorHEX);
 
         if (blockIdAndMeta.startsWith("sand") || blockIdAndMeta.startsWith("gravel") || blockIdAndMeta.includes("powder")) {
-          append(`{"cmd_line":"setblock\\t~${x}\\t~\\t~${y}\\t${opts.scaffoldBlock.id}\\t${opts.scaffoldBlock.meta}","cmd_ver":12},`);
+          a.append(`{"cmd_line":"setblock\\t~${x}\\t~\\t~${y}\\t${opts.scaffoldBlock.id}\\t${opts.scaffoldBlock.meta}","cmd_ver":12},`);
           commandsUsed++;
         }
 
-        append(`{"cmd_line":"setblock\\t~${x}\\t~1\\t~${y}\\t${blockIdAndMeta.replace(" ", "\\t")}","cmd_ver":12},`);
+        a.append(`{"cmd_line":"setblock\\t~${x}\\t~1\\t~${y}\\t${blockIdAndMeta.replace(" ", "\\t")}","cmd_ver":12},`);
         commandsUsed++;
 
         if (isLastOne) {
-          pagState.state = `Appending last part..`;
-          pagState.current++;
+          state.state = `Appending last part..`;
+          state.current++;
 
-          append(`{"cmd_line":"kill\\t@e[type=npc,r=1]","cmd_ver":12}],"mode":0,"text":"","type":1}]",CustomName:"Â§bArmagan's Stuff",InterativeText:"[PAG] Thank you for using the Armagan's NBT App! Total ${commandsUsed} commands are used.. https://github.com/TheArmagan/armagansnbtapp",Variant:19,Ticking:1b,TicksLeftToStay:1}]}`, true);
-
+          a.append(`{"cmd_line":"kill\\t@e[type=npc,r=1]","cmd_ver":12}],"mode":0,"text":"","type":1}]",CustomName:"Â§bArmagan's Stuff",InterativeText:"[PAG] Thank you for using the Armagan's NBT App! Total ${commandsUsed} commands are used.. https://github.com/TheArmagan/armagansnbtapp",Variant:19,Ticking:1b,TicksLeftToStay:1}]}`, true);
 
           commandsUsed = 0;
 
           let tokeTime = Date.now() - startTime;
-          pagState.state = `Generated! (Took ${(tokeTime / 1000).toFixed(2)} seconds..)`;
-          pagState.current = pagState.max;
-          pagState.running = false;
-
-          setTimeout(() => { clearInterval(clientUpdater); }, 5000);
+          state.state = `Baked! (Took ${(tokeTime / 1000).toFixed(2)} seconds..)`;
+          state.current = state.max;
+          state.running = false;
         }
       }, index / 500)
     })
   })
 
   ipcMain.on("smb-start", async (_, opts) => {
+    if (stater.get("smb").running) return;
 
-    const schematic = await Schematic.read(await fs.readFile(path.resolve(opts.filePath)));
+    const startTime = Date.now();
+    const state = stater.get("smb", true);
+
+    state.state = "Reading schematic..";
+    state.current++;
+    const schematic = await Schematic.read(await fs.promises.readFile(path.resolve(opts.filePath)));
+    state.state = "Read..";
+    state.current++;
 
     /** @type {Vec3} */
     const offsetPos = schematic.offset.clone();
@@ -195,30 +187,57 @@ const createWindow = async () => {
     const endPos = schematic.end().clone();
 
     const a = new Appender(path.resolve(opts.outputPath));
-    const { append } = a;
 
     let blocksUsed = 0;
 
-    append(`{Occupants:[{ActorIdentifier:"minecraft:npc<>",SaveData:{Actions:"[{"button_name":"Die","data":[{"cmd_line":"kill\\t@e[type=npc,r=1]","cmd_ver":12}],"mode":0,"text":"","type":1},{"button_name":"BuildAndDie","data":[`, true);
+    state.state = "Appending first part..";
+    a.append(`{Occupants:[{ActorIdentifier:"minecraft:npc<>",SaveData:{Actions:"[{"button_name":"Die","data":[{"cmd_line":"kill\\t@e[type=npc,r=1]","cmd_ver":12}],"mode":0,"text":"","type":1},{"button_name":"BuildAndDie","data":[`, true);
+    state.current++;
 
-    for (let x = 0; x < endPos.x - offsetPos.x; x++) {
-      for (let y = 0; y < endPos.y - offsetPos.y; y++) {
-        for (let z = 0; z < endPos.z - offsetPos.z; z++) {
-          const block = schematic.getBlock(new Vec3(x + offsetPos.x, y + offsetPos.y, z + offsetPos.z));
+    state.max = state.max + (schematic.size.x * schematic.size.y * schematic.size.z);
+    state.state = "Starting to bake..";
+    state.current++;
+    process.nextTick(() => {
+      for (let x = 0; x < endPos.x - offsetPos.x; x++) {
+        setTimeout(() => {
+          for (let y = 0; y < endPos.y - offsetPos.y; y++) {
+            setTimeout(() => {
+              for (let z = 0; z < endPos.z - offsetPos.z; z++) {
+                setTimeout(() => {
+                  const block = schematic.getBlock(new Vec3(x + offsetPos.x, y + offsetPos.y, z + offsetPos.z));
 
-          if (!opts.includeAir && block.name.toLowerCase() == "air") break;
+                  state.state = `Baking.. (${blocksUsed}, ${x}, ${y}, ${z})`;
+                  state.current++;
 
-          const _find = legacyData.find(i => i[1].toLowerCase() == block.name.toLowerCase()) || [];
-          const [id, meta] = _find[0]?.split(":") || [];
-          let { name } = mcData12.blocksArray.find(i => i.id == id && (meta == 0 || i.variations?.some(j => j.metadata == meta))) || mcData12.blocksArray.find(i => i.id == id);
-          blocksUsed++;
+                  if (block.name.toLowerCase() != "air") {
+                    blocksUsed++;
 
-          append(`{"cmd_line":"setblock\\t~${x}\\t~${y}\\t~${z}\\t${name}\\t${meta}","cmd_ver":12},`);
-        }
+                    const _find = legacyData.find(i => i[1].toLowerCase() == block.name.toLowerCase()) || [];
+                    const [id, meta] = _find[0]?.split(":") || [];
+                    let { name } = mcData12.blocksArray.find(i => i.id == id && (meta == 0 || i.variations?.some(j => j.metadata == meta))) || mcData12.blocksArray.find(i => i.id == id);
+
+
+                    a.append(`{"cmd_line":"setblock\\t~${x}\\t~${y}\\t~${z}\\t${name}\\t${meta}","cmd_ver":12},`);
+                  }
+
+                  if (x == endPos.x - offsetPos.x - 1 && y == endPos.y - offsetPos.y - 1 && endPos.z - offsetPos.z - 1) {
+                    state.state = "Appending last part..";
+                    a.append(`{"cmd_line":"kill\\t@e[type=npc,r=1]","cmd_ver":12}],"mode":0,"text":"","type":1}]",CustomName:"Â§bArmagan's Stuff",InterativeText:"[SMB] Thank you for using the Armagan's NBT App! Total ${blocksUsed} blocks are used.. https://github.com/TheArmagan/armagansnbtapp",Variant:19,Ticking:1b,TicksLeftToStay:1}]}`, true);
+                    blocksUsed++;
+
+                    const tokeTime = Date.now() - startTime;
+                    state.state = `Baked! (Took ${(tokeTime / 1000).toFixed(2)} seconds..)`;
+                    state.current = state.max;
+                    state.running = false;
+                  }
+                }, z / 500)
+              }
+            }, y / 500)
+          }
+        }, x / 500)
       }
-    }
+    })
 
-    append(`{"cmd_line":"kill\\t@e[type=npc,r=1]","cmd_ver":12}],"mode":0,"text":"","type":1}]",CustomName:"Â§bArmagan's Stuff",InterativeText:"[SMB] Thank you for using the Armagan's NBT App! Total ${blocksUsed} blocks are used.. https://github.com/TheArmagan/armagansnbtapp",Variant:19,Ticking:1b,TicksLeftToStay:1}]}`, true);
   })
 };
 
