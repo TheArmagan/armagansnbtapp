@@ -14,6 +14,7 @@ let MinecraftData = require("minecraft-data");
 let legacyData = require("./legacyBlockData.json");
 let { StateManager } = require("./StateManager");
 let mcData12 = MinecraftData("1.12");
+let chillout = require("chillout");
 
 process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true"
 process.env.PORT = process.env.PORT || 8987;
@@ -105,7 +106,7 @@ let createWindow = async () => {
     if (opts.ditherFactor != 0) {
       state.state = `Dithering.. (Takes some time)`;
       state.current++;
-      img = await Jimp.create(mcfsd(img.bitmap, opts.ditherFactor));
+      img = await Jimp.create(await mcfsd(img.bitmap, opts.ditherFactor));
       state.state = "Dithered..";
       state.current++;
     }
@@ -201,49 +202,45 @@ let createWindow = async () => {
     state.max = state.max + (schematic.size.x * schematic.size.y * schematic.size.z);
     state.state = "Starting to bake..";
     state.current++;
-    process.nextTick(() => {
-      for (let x = 0; x < endPos.x - offsetPos.x; x++) {
-        for (let y = 0; y < endPos.y - offsetPos.y; y++) {
-          for (let z = 0; z < endPos.z - offsetPos.z; z++) {
-            let block = schematic.getBlock(new Vec3(x + offsetPos.x, y + offsetPos.y, z + offsetPos.z));
-            state.state = `Baking.. (${blocksUsed}, ${x}, ${y}, ${z})`;
-            state.current++;
 
-            if (!opts.ignoreList.includes(block.name.toLowerCase())) {
-              blocksUsed++;
+    await chillout.repeat(endPos.x - offsetPos.x, async (x) => {
+      await chillout.repeat(endPos.y - offsetPos.y, async (y) => {
+        await chillout.repeat(endPos.z - offsetPos.z, async (z) => {
+          let block = schematic.getBlock(new Vec3(x + offsetPos.x, y + offsetPos.y, z + offsetPos.z));
+          state.state = `Baking.. (${blocksUsed}, ${x}, ${y}, ${z})`;
+          state.current++;
 
-              let _find = legacyData.find(i => i[1].toLowerCase() == block.name.toLowerCase()) || [];
-              let [id, meta] = _find[0]?.split(":") || [];
-              let { name } = mcData12.blocksArray.find(i => i.id == id && (meta == 0 || i.variations?.some(j => j.metadata == meta))) || mcData12.blocksArray.find(i => i.id == id);
+          if (block && !opts.ignoreList.includes(block?.name?.toLowerCase())) {
+            blocksUsed++;
 
+            let _find = legacyData.find(i => i?.[1]?.toLowerCase() == block?.name?.toLowerCase()) || [];
+            let [id, meta] = _find[0]?.split(":") || [];
+            let b12 = mcData12.blocksArray.find(i => i.id == id && (meta == 0 || i.variations?.some(j => j.metadata == meta))) || mcData12.blocksArray.find(i => i.id == id);
 
-              a.append(`{"cmd_line":"setblock\\t~${x}\\t~${y}\\t~${z}\\t${name}\\t${meta}","cmd_ver":12},`);
-            }
-
-            if (x == endPos.x - offsetPos.x - 1 && y == endPos.y - offsetPos.y - 1 && endPos.z - offsetPos.z - 1) {
-              state.state = "Appending last part..";
-              a.append(`{"cmd_line":"kill\\t@e[type=npc,r=1]","cmd_ver":12}],"mode":0,"text":"","type":1}]",CustomName:"Â§bArmagan's Stuff",InterativeText:"[SMB] Thank you for using the Armagan's NBT App! Total ${blocksUsed} blocks are used.. https://github.com/TheArmagan/armagansnbtapp",Variant:19,Ticking:1b,TicksLeftToStay:1}]}`, true);
-              blocksUsed++;
-
-              let tokeTime = Date.now() - startTime;
-              state.state = `Baked! (Took ${(tokeTime / 1000).toFixed(2)} seconds..)`;
-              state.current = state.max;
-              state.running = false;
-
-              schematic = 0;
-              offsetPos = 0;
-              endPos = 0;
-            }
+            a.append(`{"cmd_line":"setblock\\t~${x}\\t~${y}\\t~${z}\\t${b12?.name || block?.name}\\t${meta}","cmd_ver":12},`);
           }
-        }
-      }
+        })
+      })
     })
+
+    state.state = "Appending last part..";
+    a.append(`{"cmd_line":"kill\\t@e[type=npc,r=1]","cmd_ver":12}],"mode":0,"text":"","type":1}]",CustomName:"Â§bArmagan's Stuff",InterativeText:"[SMB] Thank you for using the Armagan's NBT App! Total ${blocksUsed} blocks are used.. https://github.com/TheArmagan/armagansnbtapp",Variant:19,Ticking:1b,TicksLeftToStay:1}]}`, true);
+    blocksUsed++;
+
+    let tokeTime = Date.now() - startTime;
+    state.state = `Baked! (Took ${(tokeTime / 1000).toFixed(2)} seconds..)`;
+    state.current = state.max;
+    state.running = false;
+
+
+    schematic = 0;
+    offsetPos = 0;
+    endPos = 0;
 
   })
 };
 
 app.on("ready", createWindow);
-
 
 
 app.on("window-all-closed", () => {

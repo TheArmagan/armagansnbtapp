@@ -22,7 +22,7 @@
       href="https://cdn.materialdesignicons.com/5.3.45/css/materialdesignicons.min.css"
     />
     <link rel="stylesheet" href="./lib/buefy/buefy.min.css" />
-    <title>Armagan's NBT App</title>
+    <title>Armağan's NBT App</title>
     <link rel="stylesheet" href="style.css" />
     <script>
       const { ipcRenderer } = require("electron");
@@ -92,7 +92,7 @@
                   <b-field label="Dithering" label-position="on-border">
                     <b-select v-model="pag.ditherFactor" expanded>
                       <option value="0">Don't dither</option>
-                      <option value="AUTO" disabled>AUTO</option>
+                      <option value="AUTO" disabled>AUTO (Soon)</option>
                       <option value="1">Dither every 1 pixel</option>
                       <option value="2">Dither every 2 pixel</option>
                       <option value="3">Dither every 3 pixel</option>
@@ -156,6 +156,7 @@
                     style="width: 100%"
                     :loading="pag.state.running"
                     @click="pagStart"
+                    id="pagStart"
                     >Generate</b-button
                   >
                 </div>
@@ -250,6 +251,7 @@
                       style="width: 100%"
                       :loading="smb.state.running"
                       @click="smbStart"
+                      id="smbStart"
                       >Generate</b-button
                     >
                   </div>
@@ -277,6 +279,7 @@
                   slot-scope="props"
                   class="card-header"
                   role="button"
+                  onclick="gtag('event', 'setting_click_pag')"
                 >
                   <h3 class="card-header-title">Pixel Art Generator</h3>
                   <a class="card-header-icon">
@@ -286,7 +289,10 @@
                 </div>
                 <div class="card-content">
                   <div class="content">
-                    <b-field label="Color Map">
+                    <b-field
+                      label="Color Map"
+                      message="Block id list with their average colors."
+                    >
                       <b-input
                         type="textarea"
                         minlength="0"
@@ -296,7 +302,10 @@
                       >
                       </b-input>
                     </b-field>
-                    <b-field label="Scaffold Block">
+                    <b-field
+                      label="Scaffold Block"
+                      message="Used for fallable blocks. (Eg. sand, concretepowder, etc..)"
+                    >
                       <b-input
                         minlength="0"
                         maxlength="128"
@@ -308,7 +317,6 @@
                   </div>
                 </div>
               </b-collapse>
-
               <b-collapse
                 class="card"
                 animation="slide"
@@ -320,6 +328,7 @@
                   slot-scope="props"
                   class="card-header"
                   role="button"
+                  onclick="gtag('event', 'setting_click_smb')"
                 >
                   <h3 class="card-header-title">Schematic Builder</h3>
                   <a class="card-header-icon">
@@ -329,7 +338,10 @@
                 </div>
                 <div class="card-content">
                   <div class="content">
-                    <b-field label="Block Ignore List">
+                    <b-field
+                      label="Block Ignore List"
+                      message="The blocks ignored by schematic builder. (PS: Makes huge changes on result nbt size.)"
+                    >
                       <b-input
                         type="textarea"
                         minlength="0"
@@ -338,6 +350,43 @@
                         v-model="smb.ignoreList.text"
                       >
                       </b-input>
+                    </b-field>
+                  </div>
+                </div>
+              </b-collapse>
+
+              <b-collapse
+                class="card"
+                animation="slide"
+                :open="settings.collapseIndex == 'adv'"
+                @open="settings.collapseIndex = 'adv'"
+              >
+                <div
+                  slot="trigger"
+                  slot-scope="props"
+                  class="card-header"
+                  role="button"
+                  onclick="gtag('event', 'setting_click_advanced')"
+                >
+                  <h3 class="card-header-title">Advanced</h3>
+                  <a class="card-header-icon">
+                    <b-icon :icon="props.open ? 'menu-down' : 'menu-up'">
+                    </b-icon>
+                  </a>
+                </div>
+                <div class="card-content">
+                  <div class="content">
+                    <b-field
+                      label="Appender Limit"
+                      message="How often results will be written to the file. (Higher numbers cause more ram usage, but generators runs faster.)"
+                    >
+                      <b-numberinput
+                        v-model="appenderLimit"
+                        placeholder="2048"
+                        min="1"
+                        max="16384"
+                      ></b-numberinput>
+                    </b-field>
                   </div>
                 </div>
               </b-collapse>

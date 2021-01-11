@@ -46,11 +46,12 @@
     }
   },
   "dependencies": {
+    "chillout": "^5.0.0",
     "electron-squirrel-startup": "^1.0.0",
     "express": "^4.17.1",
     "jimp": "^0.16.1",
     "lodash": "^4.17.20",
-    "mcfsd": "^1.0.1",
+    "mcfsd": "^1.2.1",
     "minecraft-data": "^2.71.0",
     "nearest-color": "^0.4.4",
     "prismarine-schematic": "^1.2.0",

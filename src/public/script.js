@@ -43,6 +43,7 @@ const app = new Vue({
     settings: {
       collapseIndex: -1,
     },
+    appenderLimit: 2048
   },
   watch: {
     "pag.file"(file) {
@@ -51,6 +52,7 @@ const app = new Vue({
         this.pag.file = null;
         this.pag.imageInfo = null;
       } else {
+        gtag('event', 'pag_select_input_file');
         const filePath = this.pag.file?.path.replace(/\\/gm, "/");
         ipcRenderer.send("pag-image-info", filePath);
       }
@@ -66,32 +68,34 @@ const app = new Vue({
         if (file.size != 0) {
           app.$buefy.toast.open({ message: "Selected output file is not blank.", type: "is-warning" })
         }
+
+        gtag('event', 'pag_select_output_file');
       }
     },
     "pag.colorMap.text": _.debounce((text) => {
       app.pag.colorMap.object = parseConfig(text);
       localStorage.setItem("pag.colorMap", text);
+      gtag('event', 'pag_color_map_text_updated');
     }, 1000),
     "pag.scaffoldBlock.text": _.debounce((text) => {
       app.pag.scaffoldBlock.object = parseConfig(text)[0];
       localStorage.setItem("pag.scaffoldBlock", text);
+      gtag('event', 'pag_scaffold_text_updated');
     }, 100),
     "smb.ignoreList.text": _.debounce((text) => {
       app.smb.ignoreList.object = text.toLowerCase().split(",");
       localStorage.setItem("smb.ignoreList", text);
+      gtag('event', 'smb_ignore_list_updated');
     }, 100),
     "smb.file"(file) {
       if (file && !["schem", "schematic"].includes(getFileExt(file.name))) {
         console.log(getFileExt(file.name))
         this.$buefy.toast.open({ message: "Input only can be SCHEMATIC file.", type: "is-danger" });
         this.smb.file = null;
+      } else {
+        gtag('event', 'smb_select_input_file');
       }
-    },
-    "smb.output"(file) {
-      if (file && file.type != "text/plain") {
-        this.$buefy.toast.open({ message: "Output only can be TXT file!", type: "is-danger" });
-        this.smb.output = null;
-      }
+
     },
     "smb.output"(file) {
       if (file) {
@@ -104,14 +108,21 @@ const app = new Vue({
         if (file.size != 0) {
           app.$buefy.toast.open({ message: "Selected output file is not blank.", type: "is-warning" })
         }
+
+        gtag('event', 'smb_select_output_file');
       }
     },
+    "title"(title) {
+      document.title = title;
+    }
   },
   methods: {
     quit() {
+      gtag('event', 'app_quit');
       ipcRenderer.send("app-quit");
     },
     pagStart() {
+      gtag('event', 'pag_start');
       ipcRenderer.send("pag-start", {
         filePath: this.pag.file?.path,
         ditherFactor: this.pag.ditherFactor,
@@ -123,6 +134,7 @@ const app = new Vue({
       });
     },
     smbStart() {
+      gtag('event', 'smb_start');
       ipcRenderer.send("smb-start", {
         filePath: this.smb.file?.path,
         outputPath: this.smb.output?.path,
@@ -149,6 +161,14 @@ const app = new Vue({
     }
 
     this.smb.ignoreList.text = localStorage.getItem("smb.ignoreList");
+
+    if (!localStorage.getItem("appenderLimit")) {
+      localStorage.setItem("appenderLimit", DEFAULT_APPENDER_LIMIT);
+    }
+
+    this.appenderLimit = parseInt(localStorage.getItem("appenderLimit"));
+
+    gtag('event', 'app_mounted');
   },
 });
 
