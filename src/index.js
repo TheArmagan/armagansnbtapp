@@ -77,7 +77,7 @@ let createWindow = async () => {
     max: 100,
     current: 0,
     state: "...",
-  }, 250);
+  }, 50);
 
 
   ipcMain.on("pag-start", async (_, opts) => {
@@ -114,7 +114,7 @@ let createWindow = async () => {
     state.max = state.max + (img.getWidth() * img.getHeight());
     let outputPath = path.resolve(opts.outputPath);
 
-    let a = new Appender(outputPath);
+    let a = new Appender(outputPath, opts.appenderLimit);
 
     state.state = `Calculating color map..`;
     state.current++;
@@ -191,7 +191,7 @@ let createWindow = async () => {
     /** @type {Vec3} */
     let endPos = schematic.end().clone();
 
-    let a = new Appender(path.resolve(opts.outputPath));
+    let a = new Appender(path.resolve(opts.outputPath), opts.appenderLimit);
 
     let blocksUsed = 0;
 

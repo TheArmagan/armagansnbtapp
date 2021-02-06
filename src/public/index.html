@@ -386,7 +386,7 @@
                       message="How often results will be written to the file. (Higher numbers cause more ram usage, but generators runs faster.)"
                     >
                       <b-numberinput
-                        v-model="appenderLimit"
+                        v-model.number="appenderLimit"
                         placeholder="2048"
                         min="1"
                         max="16384"

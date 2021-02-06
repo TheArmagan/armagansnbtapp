@@ -114,7 +114,11 @@ const app = new Vue({
     },
     "title"(title) {
       document.title = title;
-    }
+    },
+    "appenderLimit": _.debounce((num) => {
+      localStorage.setItem("appenderLimit", num);
+      gtag('event', 'appender_limit_changed');
+    }, 100)
   },
   methods: {
     quit() {
@@ -130,7 +134,8 @@ const app = new Vue({
         outputPath: this.pag.output?.path,
         colorMap: this.pag.colorMap.object,
         align: this.pag.align,
-        scaffoldBlock: this.pag.scaffoldBlock.object
+        scaffoldBlock: this.pag.scaffoldBlock.object,
+        appenderLimit: this.appenderLimit
       });
     },
     smbStart() {
@@ -139,7 +144,8 @@ const app = new Vue({
         filePath: this.smb.file?.path,
         outputPath: this.smb.output?.path,
         includeAir: this.smb.includeAir,
-        ignoreList: this.smb.ignoreIgnoreList ? [] : this.smb.ignoreList.object
+        ignoreList: this.smb.ignoreIgnoreList ? [] : this.smb.ignoreList.object,
+        appenderLimit: this.appenderLimit
       });
     }
   },
