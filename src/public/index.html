@@ -221,15 +221,20 @@
                   </b-field>
                 </div>
               </div>
-              <!-- <div class="columns">
+              <div class="columns">
                 <div class="column">
                   <b-field>
-                    <b-switch v-model="smb.includeAir">
-                      Should Include Air Blocks?
+                    <b-switch v-model="smb.ignoreIgnoreList">
+                      Should Ignore
+                      <span
+                        style="text-decoration: underline"
+                        title="Look to settings."
+                        >Ignore List?</span
+                      >
                     </b-switch>
                   </b-field>
                 </div>
-              </div> -->
+              </div>
               <div
                 class="start-buttons"
                 :class="{'disabled': (!this.smb.file || !this.smb.output)}"

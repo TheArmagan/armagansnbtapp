@@ -27,7 +27,6 @@ const app = new Vue({
     smb: {
       file: null,
       output: null,
-      includeAir: false,
       schematicInfo: null,
       state: {
         running: false,
@@ -38,7 +37,8 @@ const app = new Vue({
       ignoreList: {
         text: "",
         object: {}
-      }
+      },
+      ignoreIgnoreList: false
     },
     settings: {
       collapseIndex: -1,
@@ -139,7 +139,7 @@ const app = new Vue({
         filePath: this.smb.file?.path,
         outputPath: this.smb.output?.path,
         includeAir: this.smb.includeAir,
-        ignoreList: this.smb.ignoreList.object
+        ignoreList: this.smb.ignoreIgnoreList ? [] : this.smb.ignoreList.object
       });
     }
   },
