@@ -58,6 +58,7 @@ let createWindow = async () => {
     });
 
     if (dialogResults.response) {
+      await stater.stop();
       app.quit();
     }
   });
@@ -90,6 +91,7 @@ let createWindow = async () => {
 
     state.state = `Reading the image file..`;
     state.current++;
+    stater.tick();
     let img = await Jimp.read(path.resolve(opts.filePath));
     state.state = "Readd..";
     state.current++;
@@ -106,6 +108,7 @@ let createWindow = async () => {
     if (opts.ditherFactor != 0) {
       state.state = `Dithering.. (Takes some time)`;
       state.current++;
+      stater.tick();
       img = await Jimp.create(await mcfsd(img.bitmap, opts.ditherFactor));
       state.state = "Dithered..";
       state.current++;
@@ -181,6 +184,7 @@ let createWindow = async () => {
 
     state.state = "Reading schematic..";
     state.current++;
+    stater.tick();
     let schematic = await Schematic.read(await fs.promises.readFile(path.resolve(opts.filePath)));
     state.state = "Read..";
     state.current++;
@@ -202,6 +206,7 @@ let createWindow = async () => {
     state.max = state.max + (schematic.size.x * schematic.size.y * schematic.size.z);
     state.state = "Starting to bake..";
     state.current++;
+    stater.tick();
 
     await chillout.repeat(endPos.x - offsetPos.x, async (x) => {
       await chillout.repeat(endPos.y - offsetPos.y, async (y) => {

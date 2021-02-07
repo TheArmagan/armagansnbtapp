@@ -55,7 +55,7 @@
     "minecraft-data": "^2.71.0",
     "nearest-color": "^0.4.4",
     "prismarine-schematic": "^1.2.0",
-    "stuffs": "0.0.2",
+    "stuffs": "0.0.5",
     "vec3": "^0.1.7"
   },
   "devDependencies": {

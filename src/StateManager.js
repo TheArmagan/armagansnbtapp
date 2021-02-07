@@ -1,3 +1,5 @@
+const { sleep } = require("stuffs");
+
 class StateManager {
 
   /** @type {(newStates: Array<Object>)=>any} */
@@ -11,7 +13,21 @@ class StateManager {
     this.stater = stater;
     this.default = defaultValue;
     this.tickTime = tickTime;
-    this.tick();
+    this.start();
+  }
+
+  #running = false;
+
+  start() {
+    if (this.#running) return;
+    this.#running = true;
+    this._tick();
+  }
+
+  async stop() {
+    if (!this.#running) return;
+    this.#running = false;
+    await sleep(100);
   }
 
   /** @type {Map<string, Object>} */
@@ -31,8 +47,15 @@ class StateManager {
     if (states.length != 0) {
       this.stater(states);
     }
-    setTimeout(() => {
-      this.tick();
+  }
+
+  _tick() {
+    const states = Array.from(this.states.entries());
+    if (states.length != 0) {
+      this.stater(states);
+    }
+    if (this.#running) setTimeout(() => {
+      this._tick();
     }, this.tickTime)
   }
 
