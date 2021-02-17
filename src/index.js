@@ -58,7 +58,6 @@ let createWindow = async () => {
     });
 
     if (dialogResults.response) {
-      await stater.stop();
       app.quit();
     }
   });
@@ -243,6 +242,10 @@ let createWindow = async () => {
     endPos = 0;
 
   })
+
+  app.on("before-quit", async () => {
+    await stater.stop();
+  })
 };
 
 app.on("ready", createWindow);
@@ -253,6 +256,8 @@ app.on("window-all-closed", () => {
     app.quit();
   }
 });
+
+
 
 app.on("activate", () => {
 
