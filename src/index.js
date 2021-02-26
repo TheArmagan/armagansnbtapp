@@ -63,7 +63,7 @@ let createWindow = async () => {
 
     if (Date.now() - lastChecked > HOURS_12) {
       let json = await fetch("https://api.github.com/repos/thearmagan/armagansnbtapp/releases").then(d => d.json());
-      let isNewVersionOut = semver.gte(json[0].tag_name, package.version);
+      let isNewVersionOut = semver.gt(json[0].tag_name, package.version);
 
       if (isNewVersionOut) {
         let dialogResult = await dialog.showMessageBox(mainWindow, {
