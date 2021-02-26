@@ -1,0 +1,91 @@
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: 0;
+          box-sizing: 0;
+  outline: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+}
+
+#topbar {
+  position: absolute;
+  top: 0;
+  left: 90px;
+  width: calc(100vw - 90px);
+  height: 22px;
+  background-color: #ffd6ffff;
+  -webkit-app-region: drag;
+}
+
+#sidebar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 90px;
+  background-color: #e7c6ffff;
+  -webkit-app-region: drag;
+}
+
+#sidebar .router-link {
+  all: initial;
+}
+
+#sidebar .links {
+  margin-top: 22px;
+  width: 90px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  justify-items: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+#sidebar .links .router-link {
+  color: #947FA3;
+  cursor: pointer;
+  -webkit-transition: color 100ms ease-in-out;
+  transition: color 100ms ease-in-out;
+  -webkit-app-region: no-drag;
+}
+
+#sidebar .links .router-link:not(:first-child) {
+  margin-top: 16px;
+}
+
+#sidebar .links .router-link .icon {
+  width: 48px;
+  height: 48px;
+}
+
+#sidebar .links .router-link .icon svg {
+  width: 48px;
+  height: 48px;
+}
+
+#sidebar .links .router-link.router-link-active {
+  color: #2E2833;
+}
+
+#sidebar .links .router-link:not(.router-link-active):hover {
+  color: #5C4F66;
+}
+
+#main {
+  position: absolute;
+  top: 22px;
+  left: 90px;
+  background-color: #fbfbfb;
+  width: calc(100vw - 90px);
+  height: calc(100vh - 22px);
+}

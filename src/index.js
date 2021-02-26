@@ -15,7 +15,7 @@ const db = new FreshDB({ name: "db", folderPath: path.resolve(process.env.APPDAT
 process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true"
 process.env.PORT = process.env.PORT || 8987;
 expressApp.listen(process.env.PORT);
-expressApp.use(express.static(path.resolve(__dirname, "public")));
+expressApp.use(express.static(path.resolve(__dirname, "frontend")));
 
 /** @type {BrowserWindow} */
 let mainWindow;
@@ -23,7 +23,7 @@ let mainWindow;
 let createWindow = async () => {
 
   mainWindow = new BrowserWindow({
-    width: 800,
+    width: 900,
     height: 600,
     maximizable: false,
     fullscreenable: false,
