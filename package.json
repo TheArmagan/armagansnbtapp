@@ -1,7 +1,7 @@
 {
   "name": "armagansnbtapp",
   "productName": "Armagan's NBT App",
-  "version": "0.0.1",
+  "version": "0.1.2",
   "description": "Armagan's NBT App",
   "main": "src/index.js",
   "scripts": {
@@ -36,5 +36,8 @@
   "devDependencies": {
     "electron": "^11.3.0",
     "electron-builder": "^22.9.1"
+  },
+  "build": {
+    "icon": "./images/icon.ico"
   }
 }

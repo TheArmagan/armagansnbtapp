@@ -8,7 +8,8 @@ const schematicGenerator = require("./modules/schematicGenerator");
 const FreshDB = require("fresh.db");
 const fetch = require("node-fetch").default;
 const semver = require("semver");
-const package = require("../package.json");
+const package = require(path.resolve(__dirname, "..", "package.json"));
+console.log(package)
 const db = new FreshDB({ name: "db", folderPath: path.resolve(process.env.APPDATA, "Armagan's NBT App", "data") });
 
 process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true"
