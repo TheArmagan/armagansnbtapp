@@ -1,5 +1,4 @@
 const { sleep } = require("stuffs");
-const chillout = require("chillout");
 
 class StateManager {
 
@@ -46,12 +45,6 @@ class StateManager {
   async _tick() {
     const states = Array.from(this.states.entries());
     if (states.length != 0) {
-      // await chillout.forEach(states, ([key, value]) => {
-      //   if (value.running == false && value.current > 0) {
-      //     value.current--;
-      //   }
-      // })
-
       this.stater(states);
     }
     if (this.#running) setTimeout(() => {

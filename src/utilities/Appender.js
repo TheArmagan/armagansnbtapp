@@ -1,5 +1,4 @@
 const fs = require("fs");
-
 class Appender {
   path = "";
   limit = 2048;

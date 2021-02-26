@@ -1,7 +1,7 @@
 {
   "name": "armagansnbtapp",
   "productName": "Armagan's NBT App",
-  "version": "1.0.0",
+  "version": "1.5.0",
   "description": "Armagan's NBT App",
   "main": "src/index.js",
   "scripts": {
@@ -27,7 +27,7 @@
     "minecraft-data": "^2.71.0",
     "nearest-color": "^0.4.4",
     "prismarine-schematic": "^1.2.0",
-    "stuffs": "0.0.5",
+    "stuffs": "^0.1.0",
     "vec3": "^0.1.7"
   },
   "devDependencies": {

@@ -1,16 +1,19 @@
+const Appender = require("../utilities/Appender");
 const Jimp = require("jimp");
-const NearestColor = require("nearest-color");
-const Appender = require("../Appender");
 const mcfsd = require("mcfsd");
+const NearestColor = require("nearest-color");
+const path = require("path");
+const stuffs = require("stuffs");
 
 async function pixelArtGenerator(options, state) {
+
+  let startTime = Date.now();
+
   state.state = `Reading the image file..`;
   state.current++;
-  console.log(3)
   let img = await Jimp.read(path.resolve(options.filePath));
   state.state = "Readd..";
   state.current++;
-  console.log(1)
 
 
   if (options.scaleFactor != 1) {
@@ -50,43 +53,46 @@ async function pixelArtGenerator(options, state) {
   state.current++;
   let commandsUsed = 0;
   img.scan(0, 0, img.bitmap.width, img.bitmap.height, (x, y, index) => {
-    state.state = `Baking.. (${index}, ${x}, ${y})`;
-    state.current++;
-
-    let isLastOne = x == img.bitmap.width - 1 && y == img.bitmap.height - 1;
-
-    let pixelColorINT = img.getPixelColor(x, y);
-    let pixelColorRGBA = stuffs.intToRgba(pixelColorINT);
-    let pixelColorHEX = stuffs.rgbToHex(pixelColorRGBA.r, pixelColorRGBA.g, pixelColorRGBA.b);
-
-    console.log(2)
-
-    let { name: blockIdAndMeta } = findNearestColor(pixelColorHEX);
-
-    if (blockIdAndMeta.startsWith("sand") || blockIdAndMeta.startsWith("gravel") || blockIdAndMeta.includes("powder")) {
-      a.append(`{"cmd_line":"setblock\\t~${x}\\t~\\t~${y}\\t${options.scaffoldBlock.id}\\t${options.scaffoldBlock.meta}","cmd_ver":12},`);
-      commandsUsed++;
-    }
-
-    a.append(`{"cmd_line":"setblock\\t~${x}\\t~1\\t~${y}\\t${blockIdAndMeta.replace(" ", "\\t")}","cmd_ver":12},`);
-    commandsUsed++;
-
-    if (isLastOne) {
-      state.state = `Appending last part..`;
+    setTimeout(() => {
+      state.state = `Baking.. (${index}, ${x}, ${y})`;
       state.current++;
 
-      a.append(`{"cmd_line":"kill\\t@e[type=npc,r=1]","cmd_ver":12}],"mode":0,"text":"-","type":1}]",CustomName:"Â§bArmagan's Stuff",InterativeText:"[PAG] Thank you for using the Armagan's NBT App! Total ${commandsUsed} commands are used.. https://github.com/TheArmagan/armagansnbtapp",Variant:19,Ticking:1b,TicksLeftToStay:1}]}`, true);
+      let isLastOne = x == img.bitmap.width - 1 && y == img.bitmap.height - 1;
 
-      commandsUsed = 0;
-      img = 0;
-      a = 0;
+      let pixelColorINT = img.getPixelColor(x, y);
+      let pixelColorRGBA = stuffs.intToRgba(pixelColorINT);
+      let pixelColorHEX = stuffs.rgbToHex(pixelColorRGBA.r, pixelColorRGBA.g, pixelColorRGBA.b);
 
-      let tokeTime = Date.now() - startTime;
-      state.state = `Baked! (Took ${(tokeTime / 1000).toFixed(2)} seconds..)`;
-      state.current = state.max;
-      state.running = false;
-    }
+      let { name: blockIdAndMeta } = findNearestColor(pixelColorHEX);
+
+      if (blockIdAndMeta.startsWith("sand") || blockIdAndMeta.startsWith("gravel") || blockIdAndMeta.includes("powder")) {
+        a.append(`{"cmd_line":"setblock\\t~${x}\\t~\\t~${y}\\t${options.scaffoldBlock.id}\\t${options.scaffoldBlock.meta}","cmd_ver":12},`);
+        commandsUsed++;
+      }
+
+      a.append(`{"cmd_line":"setblock\\t~${x}\\t~1\\t~${y}\\t${blockIdAndMeta.replace(" ", "\\t")}","cmd_ver":12},`);
+      commandsUsed++;
+
+      if (isLastOne) {
+        state.state = `Appending last part..`;
+        state.current++;
+
+        a.append(`{"cmd_line":"kill\\t@e[type=npc,r=1]","cmd_ver":12}],"mode":0,"text":"-","type":1}]",CustomName:"Â§bArmagan's Stuff",InterativeText:"[PAG] Thank you for using the Armagan's NBT App! Total ${commandsUsed} commands are used.. https://github.com/TheArmagan/armagansnbtapp",Variant:19,Ticking:1b,TicksLeftToStay:1}]}`, true);
+
+        commandsUsed = 0;
+        img = 0;
+        a = 0;
+
+        let tokeTime = Date.now() - startTime;
+        state.state = `Baked! (Took ${(tokeTime / 1000).toFixed(2)} seconds..)`;
+        state.current = state.max;
+        state.running = false;
+      }
+    }, index / 500);
   })
+
+
+
 }
 
 module.exports = pixelArtGenerator;
