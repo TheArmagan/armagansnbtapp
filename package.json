@@ -30,7 +30,8 @@
     "prismarine-schematic": "^1.2.0",
     "semver": "^7.3.4",
     "stuffs": "^0.1.0",
-    "vec3": "^0.1.7"
+    "vec3": "^0.1.7",
+    "vue": "^3.0.6"
   },
   "devDependencies": {
     "electron": "^11.3.0",
