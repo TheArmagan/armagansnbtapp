@@ -9,7 +9,6 @@ const FreshDB = require("fresh.db");
 const fetch = require("node-fetch").default;
 const semver = require("semver");
 const package = require(path.resolve(__dirname, "..", "package.json"));
-console.log(package)
 const db = new FreshDB({ name: "db", folderPath: path.resolve(process.env.APPDATA, "Armagan's NBT App", "data") });
 
 process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true"
@@ -40,7 +39,7 @@ let createWindow = async () => {
 
   mainWindow.loadURL(`http://127.0.0.1:${process.env.PORT}/`);
 
-  ipcMain.on("app-quit", async () => {
+  ipcMain.on("quit", async () => {
     let dialogResults = await dialog.showMessageBox(mainWindow, {
       type: "warning",
       message: "Do you really want the exit the app right now?",

@@ -12,7 +12,16 @@
 </head>
 <body>
   <div id="app">
-    <div id="topbar">{{title}}</div>
+    <div id="topbar">
+      <div class="title">{{title}}</div>
+      <div class="quit" @click="quit()">
+        <div class="icon">
+          <svg viewBox="0 0 24 24">
+            <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
+          </svg>
+        </div>
+      </div>
+    </div>
     <div id="sidebar">
       <div class="links">
         <router-link to="/" class="router-link">
@@ -46,8 +55,10 @@
       </div>
       <div class="logo"></div>
     </div>
-    <div id="main">
-      <router-view></router-view>
+    <div id="content">
+      <div class="container">
+        <router-view ></router-view>
+      </div>
     </div>
   </div>
 </body>

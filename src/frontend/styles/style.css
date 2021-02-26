@@ -21,6 +21,49 @@ html, body {
   -webkit-app-region: drag;
 }
 
+#topbar .title {
+  line-height: 22px;
+  padding-left: 4px;
+}
+
+#topbar .quit {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(255, 255, 255, 0.2);
+  height: 22px;
+  width: 40px;
+  -webkit-app-region: no-drag;
+  -webkit-transition: color 100ms ease-in-out, background-color 100ms ease-in-out;
+  transition: color 100ms ease-in-out, background-color 100ms ease-in-out;
+  cursor: pointer;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+#topbar .quit:hover {
+  background-color: #D51425;
+  color: white;
+}
+
+#topbar .quit .icon {
+  width: 22px;
+  height: 22px;
+}
+
+#topbar .quit .icon svg {
+  width: 22px;
+  height: 22px;
+}
+
 #sidebar {
   position: absolute;
   top: 0;
@@ -36,7 +79,7 @@ html, body {
 }
 
 #sidebar .links {
-  margin-top: 22px;
+  margin-top: 16px;
   width: 90px;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -81,11 +124,17 @@ html, body {
   color: #5C4F66;
 }
 
-#main {
+#content {
   position: absolute;
   top: 22px;
   left: 90px;
-  background-color: #fbfbfb;
-  width: calc(100vw - 90px);
-  height: calc(100vh - 22px);
+  background-color: #fdfdfd;
+  max-width: calc(100vw - 90px);
+  max-height: calc(100vh - 22px);
+  width: 100%;
+  height: 100%;
+}
+
+#content .container {
+  padding: 8px;
 }
