@@ -1,4 +1,5 @@
 const { sleep } = require("stuffs");
+const chillout = require("chillout");
 
 class StateManager {
 
@@ -8,8 +9,8 @@ class StateManager {
   /** @type {Object} */
   default;
 
-  tickTime = 250;
-  constructor(stater = () => { }, defaultValue = {}, tickTime = 250) {
+  tickTime = 50;
+  constructor(stater = () => { }, defaultValue = {}, tickTime = 50) {
     this.stater = stater;
     this.default = defaultValue;
     this.tickTime = tickTime;
@@ -42,16 +43,15 @@ class StateManager {
     this.states.set(name, this.default);
   }
 
-  tick() {
+  async _tick() {
     const states = Array.from(this.states.entries());
     if (states.length != 0) {
-      this.stater(states);
-    }
-  }
+      // await chillout.forEach(states, ([key, value]) => {
+      //   if (value.running == false && value.current > 0) {
+      //     value.current--;
+      //   }
+      // })
 
-  _tick() {
-    const states = Array.from(this.states.entries());
-    if (states.length != 0) {
       this.stater(states);
     }
     if (this.#running) setTimeout(() => {
@@ -61,4 +61,4 @@ class StateManager {
 
 }
 
-module.exports = { StateManager };
+module.exports = StateManager;

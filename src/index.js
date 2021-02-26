@@ -1,20 +1,23 @@
-let { app, BrowserWindow, ipcMain, dialog } = require("electron");
-let path = require("path");
-let express = require("express");
-let expressApp = express();
-let fs = require("fs");
-let Jimp = require("jimp");
-let mcfsd = require("mcfsd");
-let stuffs = require("stuffs");
-let nearestColor = require("nearest-color");
-let { Appender } = require("./Appender");
-let { Schematic } = require('prismarine-schematic');
-let { Vec3 } = require("vec3");
-let MinecraftData = require("minecraft-data");
-let legacyData = require("./legacyBlockData.json");
-let { StateManager } = require("./StateManager");
-let mcData12 = MinecraftData("1.12");
-let chillout = require("chillout");
+const { app, BrowserWindow, ipcMain, dialog } = require("electron");
+const path = require("path");
+const express = require("express");
+const expressApp = express();
+const fs = require("fs");
+const Jimp = require("jimp");
+const mcfsd = require("mcfsd");
+const stuffs = require("stuffs");
+const nearestColor = require("nearest-color");
+const Appender = require("./Appender");
+const { Schematic } = require('prismarine-schematic');
+const { Vec3 } = require("vec3");
+const MinecraftData = require("minecraft-data");
+const legacyData = require("./data/legacyBlockData.json");
+const StateManager = require("./StateManager");
+const mcData12 = MinecraftData("1.12");
+const chillout = require("chillout");
+const RPC = require("discord-rpc");
+const pixelArtGenerator = require("./modules/pixelArtGenerator");
+
 
 process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true"
 process.env.PORT = process.env.PORT || 8987;
@@ -80,7 +83,7 @@ let createWindow = async () => {
   }, 50);
 
 
-  ipcMain.on("pag-start", async (_, opts) => {
+  ipcMain.on("pag-start", async (_, options) => {
     if (stater.get("pag").running) return;
 
     let startTime = Date.now();
@@ -88,92 +91,10 @@ let createWindow = async () => {
 
     state.running = true;
 
-    state.state = `Reading the image file..`;
-    state.current++;
-    stater.tick();
-    let img = await Jimp.read(path.resolve(opts.filePath));
-    state.state = "Readd..";
-    state.current++;
-
-
-    if (opts.scaleFactor != 1) {
-      state.state = `Scaling..`;
-      state.current++;
-      await img.scale(opts.scaleFactor);
-      state.state = "Scaled..";
-      state.current++;
-    }
-
-    if (opts.ditherFactor != 0) {
-      state.state = `Dithering.. (Takes some time)`;
-      state.current++;
-      stater.tick();
-      img = await Jimp.create(await mcfsd(img.bitmap, opts.ditherFactor));
-      state.state = "Dithered..";
-      state.current++;
-    }
-
-    state.max = state.max + (img.getWidth() * img.getHeight());
-    let outputPath = path.resolve(opts.outputPath);
-
-    let a = new Appender(outputPath, opts.appenderLimit);
-
-    state.state = `Calculating color map..`;
-    state.current++;
-
-    //let findNearestColor = nearestColor.from(Object.fromEntries(opts.colorMap.map(i => ([`${i.id} ${i.meta}`, opts.align == "vertical" ? i.topColor : i.sideColor]))));
-    let findNearestColor = nearestColor.from(Object.fromEntries(opts.colorMap.map(i => ([`${i.id} ${i.meta}`, i.topColor]))));
-
-    state.state = `Appending first part..`;
-    state.current++;
-
-    a.append(`{Occupants:[{ActorIdentifier:"minecraft:npc<>",SaveData:{Actions:"[{"button_name":"Die","data":[{"cmd_line":"kill\\t@e[type=npc,r=1]","cmd_ver":12}],"mode":0,"text":"-","type":1},{"button_name":"BuildAndDie","data":[`, true);
-
-
-    state.state = `Starting to bake..`;
-    state.current++;
-    let commandsUsed = 0;
-    img.scan(0, 0, img.bitmap.width, img.bitmap.height, (x, y, index) => {
-      setTimeout(() => {
-        state.state = `Baking.. (${index}, ${x}, ${y})`;
-        state.current++;
-
-        let isLastOne = x == img.bitmap.width - 1 && y == img.bitmap.height - 1;
-
-        let pixelColorINT = img.getPixelColor(x, y);
-        let pixelColorRGBA = stuffs.intToRgba(pixelColorINT);
-        let pixelColorHEX = stuffs.rgbToHex(pixelColorRGBA.r, pixelColorRGBA.g, pixelColorRGBA.b);
-
-        let { name: blockIdAndMeta } = findNearestColor(pixelColorHEX);
-
-        if (blockIdAndMeta.startsWith("sand") || blockIdAndMeta.startsWith("gravel") || blockIdAndMeta.includes("powder")) {
-          a.append(`{"cmd_line":"setblock\\t~${x}\\t~\\t~${y}\\t${opts.scaffoldBlock.id}\\t${opts.scaffoldBlock.meta}","cmd_ver":12},`);
-          commandsUsed++;
-        }
-
-        a.append(`{"cmd_line":"setblock\\t~${x}\\t~1\\t~${y}\\t${blockIdAndMeta.replace(" ", "\\t")}","cmd_ver":12},`);
-        commandsUsed++;
-
-        if (isLastOne) {
-          state.state = `Appending last part..`;
-          state.current++;
-
-          a.append(`{"cmd_line":"kill\\t@e[type=npc,r=1]","cmd_ver":12}],"mode":0,"text":"-","type":1}]",CustomName:"Â§bArmagan's Stuff",InterativeText:"[PAG] Thank you for using the Armagan's NBT App! Total ${commandsUsed} commands are used.. https://github.com/TheArmagan/armagansnbtapp",Variant:19,Ticking:1b,TicksLeftToStay:1}]}`, true);
-
-          commandsUsed = 0;
-          img = 0;
-          a = 0;
-
-          let tokeTime = Date.now() - startTime;
-          state.state = `Baked! (Took ${(tokeTime / 1000).toFixed(2)} seconds..)`;
-          state.current = state.max;
-          state.running = false;
-        }
-      }, index / 500)
-    })
+    pixelArtGenerator(options, state);
   })
 
-  ipcMain.on("smb-start", async (_, opts) => {
+  ipcMain.on("smb-start", async (_, options) => {
     if (stater.get("smb").running) return;
 
     let startTime = Date.now();
@@ -183,8 +104,7 @@ let createWindow = async () => {
 
     state.state = "Reading schematic..";
     state.current++;
-    stater.tick();
-    let schematic = await Schematic.read(await fs.promises.readFile(path.resolve(opts.filePath)));
+    let schematic = await Schematic.read(await fs.promises.readFile(path.resolve(options.filePath)));
     state.state = "Read..";
     state.current++;
 
@@ -194,7 +114,7 @@ let createWindow = async () => {
     /** @type {Vec3} */
     let endPos = schematic.end().clone();
 
-    let a = new Appender(path.resolve(opts.outputPath), opts.appenderLimit);
+    let a = new Appender(path.resolve(options.outputPath), options.appenderLimit);
 
     let blocksUsed = 0;
 
@@ -205,7 +125,6 @@ let createWindow = async () => {
     state.max = state.max + (schematic.size.x * schematic.size.y * schematic.size.z);
     state.state = "Starting to bake..";
     state.current++;
-    stater.tick();
 
     await chillout.repeat(endPos.x - offsetPos.x, async (x) => {
       await chillout.repeat(endPos.y - offsetPos.y, async (y) => {
@@ -214,7 +133,7 @@ let createWindow = async () => {
           state.state = `Baking.. (${blocksUsed}, ${x}, ${y}, ${z})`;
           state.current++;
 
-          if (block && !opts.ignoreList.includes(block?.name?.toLowerCase())) {
+          if (block && !options.ignoreList.includes(block?.name?.toLowerCase())) {
             blocksUsed++;
 
             let _find = legacyData.find(i => i?.[1]?.toLowerCase() == block?.name?.toLowerCase()) || [];

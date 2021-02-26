@@ -18,4 +18,4 @@ class Appender {
   }
 }
 
-module.exports = { Appender };
+module.exports = Appender;
