@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://raw.githubusercontent.com/TheArmagan/armagansnbtapp/master/images/NBT_APP_WIDE.png" width="1024"/>
+<img src="https://raw.githubusercontent.com/TheArmagan/armagansnbtapp/master/images/NBT_APP_WIDE_WITH_SHADOW.png" width="1024"/>
 </p>
 
 > # Armagan's NBT App
