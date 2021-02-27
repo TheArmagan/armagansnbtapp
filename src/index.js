@@ -11,17 +11,22 @@ const semver = require("semver");
 const Jimp = require("jimp");
 const package = require(path.resolve(__dirname, "..", "package.json"));
 const util = require("util");
+const findOpenPort = require("./utilities/findOpenPort");
 const db = new FreshDB({ name: "db", folderPath: path.resolve(process.env.APPDATA, "Armagan's NBT App", "data") });
 
 process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true"
-process.env.PORT = process.env.PORT || 8987;
-expressApp.listen(process.env.PORT);
-expressApp.use(express.static(path.resolve(__dirname, "frontend")));
+
 
 /** @type {BrowserWindow} */
 let mainWindow;
 
-let createWindow = async () => {
+app.once("ready", async () => {
+
+  process.env.PORT = process.env.PORT || await findOpenPort(8987);
+  expressApp.listen(process.env.PORT, () => {
+    console.log("Frontend server listening on port", process.env.PORT);
+  });
+  expressApp.use(express.static(path.resolve(__dirname, "frontend")));
 
   mainWindow = new BrowserWindow({
     width: 900,
@@ -125,9 +130,7 @@ let createWindow = async () => {
   app.on("before-quit", async () => {
     await stater.stop();
   })
-};
-
-app.on("ready", createWindow);
+})
 
 process.on('unhandledRejection', async (reason, promise) => {
   console.log(reason, promise);
