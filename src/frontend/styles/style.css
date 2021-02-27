@@ -11,7 +11,7 @@ html,
 body {
   width: 100%;
   height: 100%;
-  font-family: 'Comfortaa', cursive;
+  font-family: "Comfortaa", cursive;
 }
 
 #topbar {
@@ -142,13 +142,18 @@ body {
 }
 
 #sidebar .container .logo {
-  color: #2E2833;
+  color: #2e2833;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+#sidebar .container .logo .logo-container {
+  margin-top: 16px;
   margin-bottom: 16px;
   width: 90px;
   height: 128px;
 }
 
-#sidebar .container .logo svg {
+#sidebar .container .logo .logo-container svg {
   width: 90px;
   height: 128px;
 }
