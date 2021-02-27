@@ -2,24 +2,44 @@ const { ipcRenderer } = require("electron");
 
 let router;
 let app;
+let pageComponents = {};
 
 
 (async () => {
-  let homePage = await getHomePage();
-  let settingsPage = await getSettingsPage();
 
-  router = VueRouter.createRouter({
-    history: VueRouter.createWebHashHistory(),
+  // Page loading system
+  let pageNames = ["home", "settings"];
+  await chillout.forEach(pageNames, async (pageName) => {
+    'use strict';
+    let pageElement = document.createElement("body");
+    pageElement.innerHTML = await fetch(`/pages/${pageName}/index.html`).then(d => d.text());
+    pageElement.querySelector("div").classList.add(`${pageName}-page`);
+    let pageScript = eval(`${await fetch(`/pages/${pageName}/script.js`).then(d => d.text())}; componentScript`);
+    let styleSheetElement = document.createElement("link");
+    styleSheetElement.classList.add(`${pageName}-page-style`);
+    styleSheetElement.rel = "stylesheet";
+    styleSheetElement.href = `/pages/${pageName}/style.css`;
+    console.log(pageElement.innerHTML)
+    pageComponents[pageName] = {
+      template: pageElement.innerHTML,
+      ...pageScript
+    }
+    pageElement = 0;
+    pageScript = 0;
+    styleSheetElement = 0;
+  })
+
+  router = new VueRouter({
     routes: [
       {
         path: "/",
-        component: homePage.component,
-        name: homePage.name,
+        component: pageComponents.home,
+        name: "Welcome!",
       },
       {
         path: "/settings",
-        component: settingsPage.component,
-        name: settingsPage.name,
+        component: pageComponents.settings,
+        name: "Settings",
       },
       {
         path: "/generators/pixel-art",
@@ -30,15 +50,14 @@ let app;
         path: "/generators/schematic",
         component: { template: "<div>Schematic</div>" },
         name: "Schematic Converter",
-      },
+      }
     ],
   });
 
-  app = Vue.createApp({
-    data() {
-      return {
-        title: document.title,
-      };
+  app = new Vue({
+    el: "#app",
+    data: {
+      title: document.title,
     },
     methods: {
       quit() {
@@ -53,8 +72,7 @@ let app;
         this.title = data.name;
       }
     },
+    router
   });
-
-  app.use(router);
-  app.mount("#app");
+  loading()
 })();

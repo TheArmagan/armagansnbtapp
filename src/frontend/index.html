@@ -5,14 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Welcome</title>
-    <script src="https://unpkg.com/vue@next" defer></script>
-    <script src="https://unpkg.com/vue-router@4" defer></script>
+    <script src="./scripts/chillout.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js" defer></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js" defer></script>
     <script src="./scripts/index.js" defer></script>
-    <script src="./pages/home/home.js"></script>
-    <script src="./pages/settings/settings.js"></script>
     <link rel="stylesheet" href="./styles/style.css" />
   </head>
   <body>
+    <script src="./scripts/loading-popup.js"></script>
+    <script>loading("Loading...")</script>
     <div id="app">
       <div id="topbar">
         <div class="title">{{title}}</div>
@@ -91,7 +92,10 @@
       </div>
       <div id="content">
         <div class="container">
-          <router-view></router-view>
+          <keep-alive>
+            <router-view>
+          </router-view>
+          </keep-alive>
         </div>
       </div>
     </div>

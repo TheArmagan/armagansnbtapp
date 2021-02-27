@@ -133,11 +133,11 @@ body {
   height: 48px;
 }
 
-#sidebar .container .links .links-container .router-link.router-link-active {
+#sidebar .container .links .links-container .router-link.router-link-exact-active {
   color: #2e2833;
 }
 
-#sidebar .container .links .links-container .router-link:not(.router-link-active):hover {
+#sidebar .container .links .links-container .router-link:not(.router-link-exact-active):hover {
   color: #5c4f66;
 }
 
