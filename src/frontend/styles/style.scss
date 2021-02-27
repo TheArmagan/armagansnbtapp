@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap');
+
 $pink-lace: #ffd6ffff;
 $mauve: #e7c6ffff;
 $maximum-blue-purple: #c8b6ffff;
@@ -12,9 +14,11 @@ $bg: #fdfdfd;
   outline: 0;
 }
 
-html, body {
+html,
+body {
   width: 100%;
   height: 100%;
+  font-family: 'Comfortaa', cursive;
 }
 
 #topbar {
@@ -27,6 +31,7 @@ html, body {
   -webkit-app-region: drag;
 
   .title {
+    font-weight: 700;
     line-height: 22px;
     padding-left: 4px;
   }
@@ -46,7 +51,7 @@ html, body {
     cursor: pointer;
 
     &:hover {
-      background-color: #D51425;
+      background-color: #d51425;
       color: white;
     }
 
@@ -67,59 +72,73 @@ html, body {
 }
 
 #sidebar {
+  height: 100vh;
+  width: 90px;
   position: absolute;
   top: 0;
   left: 0;
-  height: 100vh;
-  width: 90px;
   background-color: $mauve;
-
-  -webkit-app-region: drag;
-
-  .router-link {
-    all: initial;
-  }
-
-  .links {
-    margin-top: 16px;
+  .container {
+    height: 100vh;
     width: 90px;
+
     display: flex;
     align-items: center;
-    justify-items: center;
+    justify-content: space-between;
     flex-direction: column;
 
-    .router-link {
+    -webkit-app-region: drag;
 
-      color: #947FA3;
-      cursor: pointer;
-      transition: color 100ms ease-in-out;
-      -webkit-app-region: no-drag;
-
-      &:not(:first-child) {
+    .links {
+      .links-container {
         margin-top: 16px;
-      }
+        width: 90px;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
 
-      .icon {
-        width: 48px;
-        height: 48px;
+        .router-link {
+          color: #947fa3;
+          cursor: pointer;
+          transition: color 100ms ease-in-out;
+          -webkit-app-region: no-drag;
 
-        svg {
-          width: 48px;
-          height: 48px;
+          &:not(:first-child) {
+            margin-top: 16px;
+          }
+
+          .icon {
+            width: 48px;
+            height: 48px;
+
+            svg {
+              width: 48px;
+              height: 48px;
+            }
+          }
+
+          &.router-link-active {
+            color: #2e2833;
+          }
+
+          &:not(.router-link-active):hover {
+            color: #5c4f66;
+          }
         }
-
       }
-
-      &.router-link-active {
-        color: #2E2833;
-      }
-
-      &:not(.router-link-active):hover {
-        color: #5C4F66;
-      }
-
     }
-    
+
+    .logo {
+      color: #2E2833;
+      margin-bottom: 16px;
+      width: 90px;
+      height: 128px;
+
+      svg {
+        width: 90px;
+        height: 128px;
+      }
+    }
   }
 }
 
