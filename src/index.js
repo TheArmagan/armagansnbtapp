@@ -48,7 +48,7 @@ app.once("ready", async () => {
 
   ipcMain.on("quit", async () => {
     let dialogResults = await dialog.showMessageBox(mainWindow, {
-      type: "information",
+      type: "info",
       message: "Do you really want the exit the app right now?",
       buttons: [
         "No",
