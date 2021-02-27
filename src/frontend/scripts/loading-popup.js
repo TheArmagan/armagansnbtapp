@@ -15,6 +15,7 @@
   justify-content: center;
   color: whitesmoke;
   -webkit-app-region: drag;
+  font-family: "Comfortaa", cursive;
   `.replace(/\n/gm, "").replace(/ {2,}/gm, "").replace(/: /gm, ":"));
   document.body.appendChild(popupElement);
 

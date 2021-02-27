@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog, shell } = require("electron");
+const { app, BrowserWindow, ipcMain, dialog, shell, contextBridge } = require("electron");
 const path = require("path");
 const express = require("express");
 const expressApp = express();
@@ -8,7 +8,9 @@ const schematicGenerator = require("./modules/schematicGenerator");
 const FreshDB = require("fresh.db");
 const fetch = require("node-fetch").default;
 const semver = require("semver");
+const Jimp = require("jimp");
 const package = require(path.resolve(__dirname, "..", "package.json"));
+const util = require("util");
 const db = new FreshDB({ name: "db", folderPath: path.resolve(process.env.APPDATA, "Armagan's NBT App", "data") });
 
 process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true"
@@ -34,14 +36,14 @@ let createWindow = async () => {
     darkTheme: true,
     autoHideMenuBar: true,
     focusable: true,
-    frame: false
+    frame: false,
   });
 
   mainWindow.loadURL(`http://127.0.0.1:${process.env.PORT}/`);
 
   ipcMain.on("quit", async () => {
     let dialogResults = await dialog.showMessageBox(mainWindow, {
-      type: "warning",
+      type: "information",
       message: "Do you really want the exit the app right now?",
       buttons: [
         "No",
@@ -127,3 +129,39 @@ let createWindow = async () => {
 
 app.on("ready", createWindow);
 
+process.on('unhandledRejection', async (reason, promise) => {
+  console.log(reason, promise);
+  await dialog.showMessageBox(mainWindow, {
+    type: "warning",
+    title: "Armagan's NBT App - Uh oh! Something went wrong.",
+    buttons: [
+      "Ok"
+    ],
+    message: `Screenshot that error. And get help from discord server.\n\n${util.inspect(reason, false, 8, false)}\n\n${util.inspect(promise, false, 8, false)}`
+  });
+});
+process.on('uncaughtException', async (error) => {
+  console.log(error);
+  await dialog.showMessageBox(mainWindow, {
+    type: "error",
+    title: "Armagan's NBT App - Uh oh! Something went wrong.",
+    buttons: [
+      "Ok"
+    ],
+    message: `Screenshot that error. And get help from discord server.\n\n${util.inspect(error, false, 8, false)}`
+  });
+  process.exit(1);
+});
+
+process.on("uncaughtExceptionMonitor", async (error) => {
+  console.log(error);
+  await dialog.showMessageBox(mainWindow, {
+    type: "error",
+    title: "Armagan's NBT App - Uh oh! Something went wrong.",
+    buttons: [
+      "Ok"
+    ],
+    message: `Screenshot that error. And get help from discord server.\n\n${util.inspect(error, false, 8, false)}`
+  });
+  process.exit(1);
+})

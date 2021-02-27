@@ -1,20 +1,23 @@
 const { ipcRenderer, shell } = require("electron");
+const Jimp = require("jimp");
+
 
 let router;
 let app;
 let pageComponents = {};
 
+Vue.use(Buefy);
 
 (async () => {
 
   // Page loading system
-  let pageNames = ["home", "settings"];
+  let pageNames = ["home", "settings", "pixelart", "schematic"];
   await chillout.forEach(pageNames, async (pageName) => {
     'use strict';
     let pageElement = document.createElement("body");
     pageElement.innerHTML = await fetch(`/pages/${pageName}/index.html`).then(d => d.text());
     pageElement.querySelector("div").classList.add(`${pageName}-page`);
-    let pageScript = eval(`${await fetch(`/pages/${pageName}/script.js`).then(d => d.text())}; componentScript`);
+    let pageScript = eval(`${(await fetch(`/pages/${pageName}/script.js`).then(d => d.text())) || "var componentScript = {}"}; componentScript`);
     let styleSheetElement = document.createElement("link");
     styleSheetElement.classList.add(`${pageName}-page-style`);
     styleSheetElement.rel = "stylesheet";
@@ -43,13 +46,13 @@ let pageComponents = {};
         name: "Settings",
       },
       {
-        path: "/generators/pixel-art",
-        component: { template: "<div>Pixel Art</div>" },
+        path: "/pixelart",
+        component: pageComponents.pixelart,
         name: "Pixel Art Generator",
       },
       {
-        path: "/generators/schematic",
-        component: { template: "<div>Schematic</div>" },
+        path: "/schematic",
+        component: pageComponents.schematic,
         name: "Schematic Converter",
       }
     ],
@@ -79,3 +82,11 @@ let pageComponents = {};
   });
   loading()
 })();
+
+function getImageSize(filePath) {
+  return new Promise(async (resolve) => {
+    let img = await Jimp.read(filePath);
+    resolve({ width: img.getWidth(), height: img.getHeight() });
+    img = 0;
+  })
+}

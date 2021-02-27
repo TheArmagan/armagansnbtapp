@@ -12,8 +12,14 @@
       src="https://unpkg.com/vue-router/dist/vue-router.js"
       defer
     ></script>
+    <script src="https://unpkg.com/buefy/dist/buefy.min.js" defer></script>
     <script src="./scripts/index.js" defer></script>
+    <link rel="stylesheet" href="https://unpkg.com/buefy/dist/buefy.min.css" />
     <link rel="stylesheet" href="./styles/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css"
+    />
   </head>
   <body>
     <script src="./scripts/loading-popup.js"></script>
@@ -48,7 +54,7 @@
                   </svg>
                 </div>
               </router-link>
-              <router-link to="/generators/pixel-art" class="router-link">
+              <router-link to="/pixelart" class="router-link">
                 <div class="icon">
                   <svg viewBox="0 0 24 24">
                     <path
@@ -58,7 +64,7 @@
                   </svg>
                 </div>
               </router-link>
-              <router-link to="/generators/schematic" class="router-link">
+              <router-link to="/schematic" class="router-link">
                 <div class="icon">
                   <svg viewBox="0 0 24 24">
                     <path

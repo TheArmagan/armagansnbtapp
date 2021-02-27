@@ -12,6 +12,34 @@ html,
 body {
   width: 100%;
   height: 100%;
+  overflow: overlay;
+}
+
+::-webkit-scrollbar {
+  width: 11px;
+}
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 11px 11px rgba(0, 0, 0, 0.05);
+          box-shadow: inset 0 0 11px 11px rgba(0, 0, 0, 0.05);
+  border: solid 2px transparent;
+  border-radius: 11px;
+}
+
+::-webkit-scrollbar-thumb {
+  -webkit-box-shadow: inset 0 0 11px 11px rgba(0, 0, 0, 0.1);
+          box-shadow: inset 0 0 11px 11px rgba(0, 0, 0, 0.1);
+  border: solid 2px transparent;
+  border-radius: 11px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  -webkit-box-shadow: inset 0 0 11px 11px rgba(0, 0, 0, 0.2);
+          box-shadow: inset 0 0 11px 11px rgba(0, 0, 0, 0.2);
+}
+
+::-webkit-scrollbar-button {
+  display: none;
 }
 
 #topbar {
@@ -27,6 +55,7 @@ body {
 #topbar .title {
   font-family: "Comfortaa", cursive;
   font-weight: 700;
+  font-size: 16px;
   line-height: 22px;
   padding-left: 4px;
 }
