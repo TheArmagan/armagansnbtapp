@@ -1,4 +1,4 @@
-const { ipcRenderer } = require("electron");
+const { ipcRenderer, shell } = require("electron");
 
 let router;
 let app;
@@ -19,14 +19,15 @@ let pageComponents = {};
     styleSheetElement.classList.add(`${pageName}-page-style`);
     styleSheetElement.rel = "stylesheet";
     styleSheetElement.href = `/pages/${pageName}/style.css`;
-    console.log(pageElement.innerHTML)
+    document.head.appendChild(styleSheetElement);
     pageComponents[pageName] = {
       template: pageElement.innerHTML,
       ...pageScript
     }
+    styleSheetElement = 0;
     pageElement = 0;
     pageScript = 0;
-    styleSheetElement = 0;
+    console.log(`%c[PAGES]%c Page ${pageName} is loaded!`, "color:#F04747;", "color:#B9BBBE;");
   })
 
   router = new VueRouter({
@@ -56,8 +57,10 @@ let pageComponents = {};
 
   app = new Vue({
     el: "#app",
-    data: {
-      title: document.title,
+    data() {
+      return {
+        title: document.title,
+      }
     },
     methods: {
       quit() {

@@ -5,6 +5,7 @@ const fs = require("fs");
 const legacyData = require("../data/legacyBlockData.json");
 const MinecraftData = require("minecraft-data");
 const mcData12 = MinecraftData("1.12");
+const path = require("path");
 
 async function schematicGenerator(options, state) {
   let startTime = Date.now();
@@ -61,7 +62,6 @@ async function schematicGenerator(options, state) {
   state.state = `Baked! (Took ${(tokeTime / 1000).toFixed(2)} seconds..)`;
   state.current = state.max;
   state.running = false;
-
 
   schematic = 0;
   offsetPos = 0;
