@@ -18,6 +18,7 @@
   "license": "GNU GPLv3",
   "dependencies": {
     "chillout": "^5.0.0",
+    "discord-rpc": "^3.2.0",
     "express": "^4.17.1",
     "fresh.db": "^1.0.6",
     "jimp": "^0.16.1",

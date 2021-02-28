@@ -30,7 +30,14 @@
     <div id="app">
       <div id="topbar">
         <div class="title">{{title}}</div>
-        <div class="quit" @click="quit()">
+        <div class="btn minimize" onclick="API.minimize()">
+          <div class="icon">
+            <svg viewBox="0 0 24 24">
+              <path fill="currentColor" d="M20,14H4V10H20" />
+            </svg>
+          </div>
+        </div>
+        <div class="btn quit" onclick="API.quit()">
           <div class="icon">
             <svg viewBox="0 0 24 24">
               <path

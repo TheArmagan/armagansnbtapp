@@ -3,9 +3,12 @@ const findFreePort = require("./utilities/findFreePort");
 const path = require("path");
 const express = require("express");
 const { dialog, app } = require("electron");
+const Jimp = require("jimp");
 
 
 class WebServerManager {
+
+  PORT = 11100
 
   app;
 
@@ -22,12 +25,12 @@ class WebServerManager {
 
   async init() {
     console.log("[WEB] Searching for free port..");
-    this.nbtapp.PORT = await findFreePort(this.nbtapp.PORT);
-    console.log("[WEB] Free port found!", this.nbtapp.PORT);
+    this.PORT = await findFreePort(this.PORT);
+    console.log("[WEB] Free port found!", this.PORT);
 
     this.registerPaths();
-    await (new Promise(resolve => { this.app.listen(this.nbtapp.PORT, resolve) }));
-    console.log(`[WEB] Server listening on port ${this.nbtapp.PORT}!`);
+    await (new Promise(resolve => { this.app.listen(this.PORT, resolve) }));
+    console.log(`[WEB] Server listening on port ${this.PORT}!`);
   }
 
   registerPaths() {
@@ -61,7 +64,13 @@ class WebServerManager {
       this.nbtapp.mainWindow.setAlwaysOnTop(true);
       this.nbtapp.mainWindow.focus();
       this.nbtapp.mainWindow.setAlwaysOnTop(false);
-    })
+    });
+
+    this.app.post("/api/other/image-size", async (req, res) => {
+      let img = await Jimp.read(path.resolve(req.body.path));
+      res.send({ width: img.getWidth(), height: img.getHeight(), pixelAmount: img.getWidth() * img.getHeight() });
+      img = 0;
+    });
   }
 }
 

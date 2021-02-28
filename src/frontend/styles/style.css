@@ -60,17 +60,11 @@ body {
   padding-left: 4px;
 }
 
-#topbar .quit {
-  position: absolute;
-  top: 0;
-  right: 0;
+#topbar .btn {
   color: rgba(0, 0, 0, 0.8);
-  background-color: rgba(255, 255, 255, 0.2);
   height: 22px;
   width: 40px;
   -webkit-app-region: no-drag;
-  -webkit-transition: color 100ms ease-in-out, background-color 100ms ease-in-out;
-  transition: color 100ms ease-in-out, background-color 100ms ease-in-out;
   cursor: pointer;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -83,19 +77,36 @@ body {
           justify-content: center;
 }
 
-#topbar .quit:hover {
-  background-color: #d51425;
+#topbar .btn .icon {
+  width: 22px;
+  height: 22px;
+}
+
+#topbar .btn .icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+#topbar .btn.quit {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+#topbar .btn.quit:hover {
+  background-color: #F04747;
   color: white;
 }
 
-#topbar .quit .icon {
-  width: 22px;
-  height: 22px;
+#topbar .btn.minimize {
+  position: absolute;
+  top: 0;
+  right: 40px;
 }
 
-#topbar .quit .icon svg {
-  width: 22px;
-  height: 22px;
+#topbar .btn.minimize:hover {
+  color: black;
+  background-color: rgba(255, 255, 255, 0.4);
 }
 
 #sidebar {

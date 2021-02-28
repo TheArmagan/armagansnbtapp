@@ -1,14 +1,13 @@
-const { app, BrowserWindow, ipcRenderer } = require("electron");
+const { app, BrowserWindow } = require("electron");
 const GeneratorManager = require("./generator/GeneratorManager");
 const WebServerManager = require("./WebServerManager");
-const console = require("console");
+const path = require("path");
+const checkUpdate = require("./utilities/checkUpdates");
 
 process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true"
 process.env["ELECTRON_ENABLE_LOGGING"] = "true"
 
 class NBTAPP {
-
-  PORT = 11100;
 
   /** @type {WebServerManager} */
   webServerManager;
@@ -20,8 +19,8 @@ class NBTAPP {
   mainWindow;
 
   async init() {
-
     console.log("[MAIN] Initializing...");
+    process.title = "Armagan's NBT App"
 
     console.log("[MAIN] Initializing WebServerManager...");
     this.webServerManager = new WebServerManager(this);
@@ -45,7 +44,7 @@ class NBTAPP {
       maximizable: false,
       width: 900,
       height: 600,
-      // icon: path.resolve(__dirname, "../images/icon.ico"),
+      icon: path.resolve(__dirname, "../images/icon.ico"),
       webPreferences: {
         contextIsolation: false,
         nodeIntegration: true
@@ -54,7 +53,9 @@ class NBTAPP {
       frame: false,
       autoHideMenuBar: true
     });
-    await this.mainWindow.loadURL(`http://127.0.0.1:${this.PORT}/`);
+    await this.mainWindow.loadURL(`http://127.0.0.1:${this.webServerManager.PORT}/`);
+
+    checkUpdate(this.mainWindow);
   }
 
 }

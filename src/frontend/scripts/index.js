@@ -68,11 +68,6 @@ Vue.use(Buefy);
     mounted() {
       this.title = this.$route.name
     },
-    methods: {
-      quit() {
-        API.quit();
-      }
-    },
     watch: {
       title(data) {
         document.title = `Armagan's NBT App - ${data}`;
@@ -85,11 +80,3 @@ Vue.use(Buefy);
   });
   loading()
 })();
-
-function getImageSize(filePath) {
-  return new Promise(async (resolve) => {
-    let img = await Jimp.read(filePath);
-    resolve({ width: img.getWidth(), height: img.getHeight() });
-    img = 0;
-  })
-}

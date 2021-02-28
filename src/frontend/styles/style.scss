@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap");
 
 $pink-lace: #ffd6ffff;
@@ -63,25 +63,12 @@ body {
     padding-left: 4px;
   }
 
-  .quit {
-    position: absolute;
-    top: 0;
-    right: 0;
+  .btn {
     color: rgba(0, 0, 0, 0.8);
-    background-color: rgba(255, 255, 255, 0.2);
     height: 22px;
     width: 40px;
-
     -webkit-app-region: no-drag;
-
-    transition: color 100ms ease-in-out, background-color 100ms ease-in-out;
     cursor: pointer;
-
-    &:hover {
-      background-color: #d51425;
-      color: white;
-    }
-
     display: flex;
     align-items: center;
     justify-content: center;
@@ -93,6 +80,28 @@ body {
       svg {
         width: 22px;
         height: 22px;
+      }
+    }
+
+    &.quit {
+      position: absolute;
+      top: 0;
+      right: 0;
+
+      &:hover {
+        background-color: #F04747;
+        color: white;
+      }
+    }
+
+    &.minimize {
+      position: absolute;
+      top: 0;
+      right: 40px;
+
+      &:hover {
+        color: black;
+        background-color: rgba(255, 255, 255, 0.4);
       }
     }
   }
