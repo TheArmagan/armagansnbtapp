@@ -62,17 +62,20 @@ Vue.use(Buefy);
     el: "#app",
     data() {
       return {
-        title: document.title,
+        title: "",
       }
+    },
+    mounted() {
+      this.title = this.$route.name
     },
     methods: {
       quit() {
-        ipcRenderer.send("quit");
+        API.quit();
       }
     },
     watch: {
       title(data) {
-        document.title = data;
+        document.title = `Armagan's NBT App - ${data}`;
       },
       $route(data) {
         this.title = data.name;

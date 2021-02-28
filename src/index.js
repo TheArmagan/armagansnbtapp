@@ -11,7 +11,7 @@ const semver = require("semver");
 const Jimp = require("jimp");
 const package = require(path.resolve(__dirname, "..", "package.json"));
 const util = require("util");
-const findOpenPort = require("./utilities/findOpenPort");
+const findOpenPort = require("./utilities/findFreePort");
 const db = new FreshDB({ name: "db", folderPath: path.resolve(process.env.APPDATA, "Armagan's NBT App", "data") });
 
 process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true"
@@ -45,23 +45,6 @@ app.once("ready", async () => {
   });
 
   mainWindow.loadURL(`http://127.0.0.1:${process.env.PORT}/`);
-
-  ipcMain.on("quit", async () => {
-    let dialogResults = await dialog.showMessageBox(mainWindow, {
-      type: "info",
-      message: "Do you really want the exit the app right now?",
-      buttons: [
-        "No",
-        "Yes"
-      ],
-      cancelId: 0,
-      defaultId: 1
-    });
-
-    if (dialogResults.response) {
-      app.quit();
-    }
-  });
 
   (async () => {
     const HOURS_12 = 43_200_000 // 12 hours
@@ -120,16 +103,27 @@ app.once("ready", async () => {
     schematicGenerator(options, state);
   });
 
-  ipcMain.on("pag-image-info", async (event, fileName) => {
-    if (!fileName) return;
-    let img = await Jimp.read(path.resolve(fileName));
-    mainWindow.webContents.send("pag-image-info", { width: img.getWidth(), height: img.getHeight() });
-    img = 0;
+})
+
+ipcMain.on("quit", async () => {
+  let dialogResults = await dialog.showMessageBox(mainWindow, {
+    type: "info",
+    message: "Do you really want the exit the app right now?",
+    buttons: [
+      "No",
+      "Yes"
+    ],
+    cancelId: 0,
+    defaultId: 1
   });
 
-  app.on("before-quit", async () => {
-    await stater.stop();
-  })
+  if (dialogResults.response) {
+    app.quit();
+  }
+});
+
+app.on("before-quit", async () => {
+  await stater.stop();
 })
 
 process.on('unhandledRejection', async (reason, promise) => {
