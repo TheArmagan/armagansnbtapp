@@ -23,11 +23,15 @@ var componentScript = {
     outputFile(file) {
       if (!file?.name) return;
       if (file.size != 0) {
-        NOTIFY.show("Please select a clean txt file.");
+        NOTIFY.warn("Please select a clean txt file.", 10000);
       }
     },
     scaleFactor() {
       this.calcluteImageSize();
+    },
+    start() {
+      if (this.state.running) return;
+
     }
   },
   methods: {
@@ -42,16 +46,25 @@ var componentScript = {
       this.imageWidth = Math.round(width * this.scaleFactor);
       this.imageHeight = Math.round(height * this.scaleFactor);
       this.imagePixelAmount = Math.round(this.imageWidth * this.imageHeight);
+    },
+    async updateState() {
+      const { data } = await fetch("/api/generators/pixelart/state").then(d => d.json());
+      this.state = data;
     }
   },
-  mounted() {
+  async mounted() {
+    await new Promise(r => this.$nextTick(r));
     const self = this;
-    setInterval(async () => {
-      if (app.$route.fullPath.includes("pixelart")) {
-        const { data } = await fetch("/api/generators/pixelart/state").then(d => d.json());
-        self.state = data;
+    (() => {
+      async function _update() {
+        if (self.$route.path == "/pixelart") {
+          await self.updateState();
+        }
+        await sleep(100);
+        _update();
       }
-    }, 100);
+      _update();
+    })();
   }
 }
 

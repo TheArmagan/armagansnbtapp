@@ -1,8 +1,4 @@
-const { ipcRenderer, shell } = require("electron");
-
-
 let router;
-let app;
 let pageComponents = {};
 
 Vue.use(Buefy);
@@ -57,7 +53,7 @@ Vue.use(Buefy);
     ],
   });
 
-  app = new Vue({
+  window.app = new Vue({
     el: "#app",
     data() {
       return {
@@ -79,3 +75,5 @@ Vue.use(Buefy);
   });
   loading()
 })();
+
+function sleep(ms = 1000) { return new Promise(r => setTimeout(r, ms)) };

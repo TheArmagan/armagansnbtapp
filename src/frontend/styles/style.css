@@ -96,7 +96,7 @@ body {
 }
 
 #topbar .btn.quit:hover {
-  background-color: #F04747;
+  background-color: #f04747;
   color: white;
 }
 
@@ -226,4 +226,12 @@ body {
 #content .page {
   position: relative;
   margin: 16px;
+}
+
+#content .page .container {
+  height: calc(100vh - 26px);
+}
+
+#content .page .main {
+  margin-top: 16px;
 }

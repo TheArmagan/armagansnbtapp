@@ -6,9 +6,9 @@
   notificationsElement.classList.add("notifications");
   document.body.appendChild(notificationsElement);
 
-  window.NOTIFY.show = (html, duration = 5000) => {
+  window.NOTIFY.show = (html = "", duration = 5000, classesToAdd = ["is-primary"]) => {
     let notificationElement = document.createElement("div");
-    notificationElement.classList.add("notification", "is-primary");
+    notificationElement.classList.add("notification", ...classesToAdd);
     let deleteButton = document.createElement("button");
 
     function _delete() {
@@ -45,4 +45,20 @@
       notificationsElement.classList.remove("full-size");
     }
   }
+
+  window.NOTIFY.info = (html = "", duration = 5000) => {
+    window.NOTIFY.show(html, duration, ["is-info"])
+  };
+
+  window.NOTIFY.success = (html = "", duration = 5000) => {
+    window.NOTIFY.show(html, duration, ["is-success"])
+  };
+
+  window.NOTIFY.warn = (html = "", duration = 5000) => {
+    window.NOTIFY.show(html, duration, ["is-warning"])
+  };
+
+  window.NOTIFY.error = (html = "", duration = 5000) => {
+    window.NOTIFY.show(html, duration, ["is-danger"])
+  };
 })();

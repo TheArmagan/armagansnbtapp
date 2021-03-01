@@ -1,11 +1,4 @@
 .pixelart-page {
-  .container {
-    height: calc(100vh - 26px);
-  }
-
-  .main {
-    margin-top: 16px;
-  }
 
   .controls {
     display: inline-block;
@@ -17,7 +10,7 @@
     border-top-left-radius: 16px;
     border-top-right-radius: 16px;
     border: 2px solid #f0f0f0;
-    height: 90px;
+    height: 120px;
     padding: 16px;
     box-shadow: 0 2.8px 2.2px rgba(0, 0, 0, 0.02),
       0 6.7px 5.3px rgba(0, 0, 0, 0.028), 0 12.5px 10px rgba(0, 0, 0, 0.035),
