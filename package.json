@@ -17,6 +17,7 @@
   },
   "license": "GNU GPLv3",
   "dependencies": {
+    "@types/express": "^4.17.11",
     "chillout": "^5.0.0",
     "discord-rpc": "^3.2.0",
     "express": "^4.17.1",

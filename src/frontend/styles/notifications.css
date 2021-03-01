@@ -1,0 +1,42 @@
+.notifications {
+  pointer-events: none;
+  --animate-duration: 0.5s;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  -webkit-box-align: end;
+      -ms-flex-align: end;
+          align-items: flex-end;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0px;
+  height: 0px;
+}
+
+.notifications.full-size {
+  width: 100vw;
+  height: 100vh;
+  padding: 16px;
+}
+
+.notifications .notification {
+  margin-bottom: 4px !important;
+  display: inline-block;
+  min-width: 128px;
+  max-width: 256px;
+  word-wrap: break-word;
+  word-break: break-all;
+  padding: 6px;
+}
+
+.notifications .notification .notification-content {
+  margin-right: 24px;
+}

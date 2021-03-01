@@ -1,5 +1,4 @@
 const { ipcRenderer, shell } = require("electron");
-const Jimp = require("jimp");
 
 
 let router;
@@ -16,7 +15,7 @@ Vue.use(Buefy);
     'use strict';
     let pageElement = document.createElement("body");
     pageElement.innerHTML = await fetch(`/pages/${pageName}/index.html`).then(d => d.text());
-    pageElement.querySelector("div").classList.add(`${pageName}-page`);
+    pageElement.querySelector("div").classList.add(`${pageName}-page`, "page");
     let pageScript = eval(`${(await fetch(`/pages/${pageName}/script.js`).then(d => d.text())) || "var componentScript = {}"}; componentScript`);
     let styleSheetElement = document.createElement("link");
     styleSheetElement.classList.add(`${pageName}-page-style`);

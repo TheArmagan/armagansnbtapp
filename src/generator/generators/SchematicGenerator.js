@@ -8,5 +8,9 @@ class SchematicGenerator {
   constructor(generatorManager) {
     this.generatorManager = generatorManager;
   }
+
+  async init() {
+
+  }
 }
 module.exports = SchematicGenerator;

@@ -21,8 +21,13 @@ class GeneratorManager {
   }
 
   async init() {
+    console.log("[GENERATORS] Initializing PixelartGenerator...");
     this.pixelartGenerator = new PixelartGenerator(this);
+    await this.pixelartGenerator.init();
+
+    console.log("[GENERATORS] Initializing SchematicGenerator...");
     this.schematicGenerator = new SchematicGenerator(this);
+    await this.schematicGenerator.init();
   }
 
 }

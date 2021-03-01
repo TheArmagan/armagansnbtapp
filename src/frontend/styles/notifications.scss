@@ -1,0 +1,35 @@
+.notifications {
+  pointer-events: none;
+  --animate-duration: 0.5s;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-end;
+
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0px;
+  height: 0px;
+
+  &.full-size {
+    width: 100vw;
+    height: 100vh;
+    padding: 16px;
+  }
+
+  .notification {
+    margin-bottom: 4px !important;
+    display: inline-block;
+    min-width: 128px;
+    max-width: 256px;
+    word-wrap: break-word;
+    word-break: break-all;
+    padding: 6px;
+
+    .notification-content {
+      margin-right: 24px;
+    }
+  }
+}

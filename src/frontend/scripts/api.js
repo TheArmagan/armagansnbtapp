@@ -9,7 +9,8 @@ const API = {
     fetch("/api/focus");
   },
   async getImageSize(filePath) {
-    let data = await fetch("/api/other/image-size", {
+    let { data } = await fetch("/api/other/image-size", {
+      method: "POST",
       headers: {
         "content-type": "application/json"
       },

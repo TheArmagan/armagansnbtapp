@@ -13,6 +13,8 @@ body {
   width: 100%;
   height: 100%;
   overflow: overlay;
+  background-color: #fdfdfd;
+  overflow-x: hidden;
 }
 
 ::-webkit-scrollbar {
@@ -118,7 +120,7 @@ body {
   background-color: #e7c6ffff;
 }
 
-#sidebar .container {
+#sidebar .sidebar-container {
   height: 100vh;
   width: 90px;
   display: -webkit-box;
@@ -137,7 +139,7 @@ body {
   -webkit-app-region: drag;
 }
 
-#sidebar .container .links .links-container {
+#sidebar .sidebar-container .links .links-container {
   margin-top: 16px;
   width: 90px;
   display: -webkit-box;
@@ -152,7 +154,7 @@ body {
           flex-direction: column;
 }
 
-#sidebar .container .links .links-container .router-link {
+#sidebar .sidebar-container .links .links-container .router-link {
   color: #947fa3;
   cursor: pointer;
   -webkit-transition: color 100ms ease-in-out;
@@ -160,11 +162,11 @@ body {
   -webkit-app-region: no-drag;
 }
 
-#sidebar .container .links .links-container .router-link:not(:first-child) {
+#sidebar .sidebar-container .links .links-container .router-link:not(:first-child) {
   margin-top: 16px;
 }
 
-#sidebar .container .links .links-container .router-link .icon {
+#sidebar .sidebar-container .links .links-container .router-link .icon {
   width: 48px;
   height: 48px;
   display: -webkit-box;
@@ -178,37 +180,37 @@ body {
           align-items: center;
 }
 
-#sidebar .container .links .links-container .router-link .icon svg {
+#sidebar .sidebar-container .links .links-container .router-link .icon svg {
   width: 48px;
   height: 48px;
 }
 
-#sidebar .container .links .links-container .router-link .icon.small svg {
+#sidebar .sidebar-container .links .links-container .router-link .icon.small svg {
   width: 32px;
   height: 32px;
 }
 
-#sidebar .container .links .links-container .router-link.router-link-exact-active {
+#sidebar .sidebar-container .links .links-container .router-link.router-link-exact-active {
   color: #2e2833;
 }
 
-#sidebar .container .links .links-container .router-link:not(.router-link-exact-active):hover {
+#sidebar .sidebar-container .links .links-container .router-link:not(.router-link-exact-active):hover {
   color: #5c4f66;
 }
 
-#sidebar .container .logo {
+#sidebar .sidebar-container .logo {
   color: #2e2833;
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-#sidebar .container .logo .logo-container {
+#sidebar .sidebar-container .logo .logo-container {
   margin-top: 16px;
   margin-bottom: 16px;
   width: 90px;
   height: 128px;
 }
 
-#sidebar .container .logo .logo-container svg {
+#sidebar .sidebar-container .logo .logo-container svg {
   width: 90px;
   height: 128px;
 }
@@ -217,14 +219,14 @@ body {
   position: absolute;
   top: 22px;
   left: 90px;
-  background-color: #fdfdfd;
+  min-width: calc(100vw - 90px);
+  min-height: calc(100vh - 22px);
   max-width: calc(100vw - 90px);
   max-height: calc(100vh - 22px);
-  width: 100%;
-  height: 100%;
+  width: calc(100vw - 90px);
+  height: calc(100vh - 22px);
 }
 
-#content .container {
-  padding-left: 16px;
-  padding-top: 16px;
+#content .page {
+  margin: 16px;
 }
