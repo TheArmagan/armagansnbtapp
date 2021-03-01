@@ -4,11 +4,14 @@
       <div class="column">
         <h1 class="title">Pixel Art Generator</h1>
         <p>Here you can convert images to pixel arts.</p>
-        <p>Input is schematic or schem file. Output is blank txt file.</>
+        <p>Input is schematic or schem file. Output is blank txt file.</p>
       </div>
-      <div class="column" style="float: right; text-align: right;">
+      <div class="column" style="float: right; text-align: right">
         <p>Image Size: {{imageWidth}}x{{imageHeight}}</p>
-        <p>Required Blocks to Build: ~{{imagePixelAmount.toLocaleString("en-us")}}</p>
+        <p>
+          Required Blocks to Build:
+          ~{{imagePixelAmount.toLocaleString("en-us")}}
+        </p>
       </div>
     </div>
     <div class="main">
@@ -44,7 +47,9 @@
             <b-select value="5">
               <option value="-1" disabled>AUTO (Soon)</option>
               <option value="0">No dithering</option>
-              <option :value="n" v-for="n in 10" :key="n">Dither every {{n}} pixel</option>
+              <option :value="n" v-for="n in 10" :key="n">
+                Dither every {{n}} pixel
+              </option>
             </b-select>
           </b-field>
         </div>
@@ -54,6 +59,11 @@
           </b-field>
         </div>
       </div>
+    </div>
+    <div class="controls">
+      <b-progress show-value v-model="state.progress" :max="state.progressMax">
+        {{state.progress}}/{{state.progressMax}}
+      </b-progress>
     </div>
   </div>
 </div>

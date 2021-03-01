@@ -7,7 +7,13 @@ var componentScript = {
       imageHeight: 0,
       imagePixelAmount: 0,
       scaleFactor: 1,
-      ditheringFactor: 5
+      ditheringFactor: 5,
+      state: {
+        progressMax: 0,
+        progress: 0,
+        stateText: "...",
+        running: false
+      }
     }
   },
   watch: {
@@ -37,6 +43,15 @@ var componentScript = {
       this.imageHeight = Math.round(height * this.scaleFactor);
       this.imagePixelAmount = Math.round(this.imageWidth * this.imageHeight);
     }
+  },
+  mounted() {
+    const self = this;
+    setInterval(async () => {
+      if (app.$route.fullPath.includes("pixelart")) {
+        const { data } = await fetch("/api/generators/pixelart/state").then(d => d.json());
+        self.state = data;
+      }
+    }, 100);
   }
 }
 

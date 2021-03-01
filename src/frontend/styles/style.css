@@ -219,14 +219,11 @@ body {
   position: absolute;
   top: 22px;
   left: 90px;
-  min-width: calc(100vw - 90px);
-  min-height: calc(100vh - 22px);
-  max-width: calc(100vw - 90px);
-  max-height: calc(100vh - 22px);
   width: calc(100vw - 90px);
   height: calc(100vh - 22px);
 }
 
 #content .page {
+  position: relative;
   margin: 16px;
 }
