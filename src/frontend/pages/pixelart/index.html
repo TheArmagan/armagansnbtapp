@@ -1,69 +1,59 @@
 <div>
   <div class="container">
     <div class="columns description">
-    <div class="column">
-      <h1 class="title">Pixel Art Generator</h1>
-      <p>Here you can convert images to pixel arts.</p>
-      <p>Input is schematic or schem file. Output is blank txt file.</>
-    </div>
-    <div class="column" style="float: right; text-align: right;">
-      <p>Image Size: {{imageWidth}}x{{imageHeight}}</p>
-      <p>Required Blocks to Build: ~{{imagePixelAmount.toLocaleString("en-us")}}</p>
-    </div>
-  </div>
-  <div class="main">
-    <div class="columns">
       <div class="column">
-        <b-field class="file is-primary has-name">
-          <b-upload
-            v-model="inputFile"
-            class="file-label"
-            accept=".jpg, .jpeg, .jfif, .png"
-          >
-            <span class="file-cta">
-              <b-icon class="file-icon" icon="upload"></b-icon>
-              <span class="file-label">Input</span>
-            </span>
-            <span class="file-name"
-              >{{ inputFile?.name ? inputFile?.name : "Please Pick a Image"}}</span
-            >
-          </b-upload>
-        </b-field>
+        <h1 class="title">Pixel Art Generator</h1>
+        <p>Here you can convert images to pixel arts.</p>
+        <p>Input is schematic or schem file. Output is blank txt file.</>
       </div>
-      <div class="column">
-        <b-field class="file is-primary has-name">
-          <b-upload v-model="outputFile" class="file-label" accept=".txt">
-            <span class="file-cta">
-              <b-icon class="file-icon" icon="download"></b-icon>
-              <span class="file-label">Output</span>
-            </span>
-            <span class="file-name">
-              {{ outputFile?.name ? outputFile?.name : "Please Pick a TXT File"}}
-            </span>
-          </b-upload>
-        </b-field>
+      <div class="column" style="float: right; text-align: right;">
+        <p>Image Size: {{imageWidth}}x{{imageHeight}}</p>
+        <p>Required Blocks to Build: ~{{imagePixelAmount.toLocaleString("en-us")}}</p>
       </div>
     </div>
-    <div class="columns">
-      <div class="column">
-        <b-field label="Dithering" label-position="inside">
-          <b-select value="5">
-            <option value="-1" disabled>AUTO (Soon)</option>
-            <option value="0">No dithering</option>
-            <option value="1">Dither every 1 pixel</option>
-            <option value="2">Dither every 2 pixel</option>
-            <option value="3">Dither every 3 pixel</option>
-            <option value="4">Dither every 4 pixel</option>
-            <option value="5">Dither every 5 pixel</option>
-            <option value="6">Dither every 6 pixel</option>
-            <option value="7">Dither every 7 pixel</option>
-            <option value="8">Dither every 8 pixel</option>
-            <option value="9">Dither every 9 pixel</option>
-            <option value="10">Dither every 10 pixel</option>
-          </b-select>
-        </b-field>
+    <div class="main">
+      <div class="columns">
+        <div class="column">
+          <b-field class="file is-primary has-name">
+            <b-upload v-model="inputFile" class="file-label" accept=".jpg, .jpeg, .jfif, .png">
+              <span class="file-cta">
+                <b-icon class="file-icon" icon="upload"></b-icon>
+                <span class="file-label">Input</span>
+              </span>
+              <span class="file-name">{{ inputFile?.name ? inputFile?.name : "Please Pick a Image"}}</span>
+            </b-upload>
+          </b-field>
+        </div>
+        <div class="column">
+          <b-field class="file is-primary has-name">
+            <b-upload v-model="outputFile" class="file-label" accept=".txt">
+              <span class="file-cta">
+                <b-icon class="file-icon" icon="download"></b-icon>
+                <span class="file-label">Output</span>
+              </span>
+              <span class="file-name">
+                {{ outputFile?.name ? outputFile?.name : "Please Pick a TXT File"}}
+              </span>
+            </b-upload>
+          </b-field>
+        </div>
+      </div>
+      <div class="columns">
+        <div class="column">
+          <b-field v-model="ditheringFactor" label="Dithering" label-position="inside">
+            <b-select value="5">
+              <option value="-1" disabled>AUTO (Soon)</option>
+              <option value="0">No dithering</option>
+              <option :value="n" v-for="n in 10" :key="n">Dither every {{n}} pixel</option>
+            </b-select>
+          </b-field>
+        </div>
+        <div class="column">
+          <b-field label="Scale Factor" label-position="inside">
+            <b-numberinput v-model="scaleFactor" min="0.01" max="8" step="0.01" value="1"></b-numberinput>
+          </b-field>
+        </div>
       </div>
     </div>
-  </div>
   </div>
 </div>
