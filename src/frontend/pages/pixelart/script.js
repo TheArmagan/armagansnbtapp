@@ -24,7 +24,7 @@ var componentScript = {
     async outputFile(file) {
       if (!file?.name) return;
       if (file.size != 0) {
-
+        NOTIFY.show("Please select a clean txt file.");
       }
     }
   }
