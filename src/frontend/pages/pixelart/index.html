@@ -66,7 +66,7 @@
       </b-progress>
       <div class="columns is-vcentered">
         <div class="column is-three-fifths">
-          <b-button type="is-primary" expanded :loading="this.state.running" :disabled="!(this.inputFile?.name && this.outputFile?.name)">Start</b-button>
+          <b-button type="is-primary" expanded :loading="this.state.running" :disabled="!(this.inputFile?.name && this.outputFile?.name)" @click="start()">Start</b-button>
         </div>
         <div class="column">
           <b-button type="is-static" expanded>{{state.stateText}}</b-button>

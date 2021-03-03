@@ -1,3 +1,5 @@
+const { ipcRenderer } = require("electron");
+
 var componentScript = {
   data() {
     return {
@@ -28,10 +30,6 @@ var componentScript = {
     },
     scaleFactor() {
       this.calcluteImageSize();
-    },
-    start() {
-      if (this.state.running) return;
-
     }
   },
   methods: {
@@ -48,9 +46,18 @@ var componentScript = {
       this.imagePixelAmount = Math.round(this.imageWidth * this.imageHeight);
     },
     async updateState() {
-      const { data } = await fetch("/api/generators/pixelart/state").then(d => d.json());
-      this.state = data;
-    }
+      let data = await ipcRenderer.invoke("generators:pixelart:state");
+      return data;
+    },
+    start: throttle(async function () {
+      if (this.state.running) return;
+      await ipcRenderer.invoke("generators:pixelart:start", {
+        inputFile: this.inputFile,
+        outputFile: this.outputFile,
+        scaleFactor: this.scaleFactor,
+        ditheringFactor: this.ditheringFactor
+      });
+    }, 1000)
   },
   async mounted() {
     await new Promise(r => this.$nextTick(r));

@@ -1,3 +1,4 @@
+const { ipcMain } = require("electron");
 const GeneratorManager = require("../GeneratorManager");
 
 class PixelartGenerator {
@@ -18,13 +19,13 @@ class PixelartGenerator {
   async init() {
     let app = this.generatorManager.nbtapp.webServerManager.app;
 
-    app.get("/api/generators/pixelart/state", (req, res) => {
-      res.send({ ok: true, data: this.state });
+    ipcMain.handle("generators:pixelart:state", async () => {
+      return this.state;
     });
 
-    app.post("/api/generators/pixelart/start", (req, res) => {
-      if (this.state.running) return res.send({ ok: false, reason: "Already running.." });
-    })
+    ipcMain.handle("generators:pixelart:start", async () => {
+      if (this.state.running) return res.send({ ok: false });
+    });
   }
 
   async run() {

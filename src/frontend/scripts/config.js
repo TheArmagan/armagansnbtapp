@@ -12,7 +12,7 @@ class ConfigManager {
     if (!this.#defaults.hasOwnProperty(key)) throw "Invalid key!";
     let lData = localStorage.getItem(`config:${key}`);
     if (!lData) return this.getDefault(key);
-    return JSON.parse(lData).value;;
+    return JSON.parse(lData).value;
   }
 
   set(key, value) {
@@ -21,10 +21,12 @@ class ConfigManager {
     let valType = typeof value;
     if (defType != valType) throw `Expected type is ${defType} for key ${key} but found ${valType}!`;
     localStorage.setItem(`config:${key}`, JSON.stringify({ value }));
+    this.#update();
   }
 
   remove(key) {
     localStorage.removeItem(`config:${key}`);
+    this.#update();
   }
 
   getAll() {
@@ -42,7 +44,8 @@ class ConfigManager {
   setAll(obj) {
     Object.entries(obj).forEach(([key, value]) => {
       this.set(key, value);
-    })
+    });
+    this.#update();
   }
 
   clear() {
@@ -51,6 +54,17 @@ class ConfigManager {
       .forEach((key) => {
         this.remove(key);
       })
+    this.#update();
+  }
+
+  #update = async () => {
+    await fetch("/api/config/set", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json"
+      },
+      body: JSON.stringify(this.getAll())
+    })
   }
 
 }
