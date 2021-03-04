@@ -58,6 +58,7 @@ body {
   -webkit-app-region: drag;
 
   .title {
+    user-select: none;
     font-family: "Comfortaa", cursive;
     font-weight: 700;
     font-size: 16px;
@@ -116,6 +117,7 @@ body {
   top: 0;
   left: 0;
   background-color: $mauve;
+  user-select: none;
   .sidebar-container {
     height: 100vh;
     width: 90px;

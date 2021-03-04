@@ -67,13 +67,12 @@ class NBTAPP {
   _otherStuff() {
     ipcMain.handle("other:image-size", async (_, filePath) => {
       let img = await Jimp.read(path.resolve(filePath));
-      console.log("[OTHER] Adding listeners to invokers..");
       let data = { width: img.getWidth(), height: img.getHeight() };
       img = 0;
       return data;
     });
 
-    ipcMain.on("other:user-config-set", (_, config) => {
+    ipcMain.handle("other:user-config-set", (_, config) => {
       this.userConfig = config;
     });
   }

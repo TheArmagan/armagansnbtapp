@@ -1,7 +1,9 @@
 class ConfigManager {
 
   #defaults = {
-    appenderLimit: 2048
+    colorMapFile: {},
+    appenderLimit: 2048,
+    desktopNotifications: false
   }
 
   getDefault(key) {
@@ -9,14 +11,14 @@ class ConfigManager {
   }
 
   get(key) {
-    if (!this.#defaults.hasOwnProperty(key)) throw "Invalid key!";
+    if (!this.#defaults.hasOwnProperty(key)) throw `Invalid key! (${key})`;
     let lData = localStorage.getItem(`config:${key}`);
     if (!lData) return this.getDefault(key);
     return JSON.parse(lData).value;
   }
 
   set(key, value) {
-    if (!this.#defaults.hasOwnProperty(key)) throw "Invalid key!";
+    if (!this.#defaults.hasOwnProperty(key)) throw `Invalid key! (${key})`;
     let defType = typeof this.getDefault(key);
     let valType = typeof value;
     if (defType != valType) throw `Expected type is ${defType} for key ${key} but found ${valType}!`;

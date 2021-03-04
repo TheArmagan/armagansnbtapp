@@ -15,6 +15,6 @@ const API = {
     return await ipcRenderer.invoke(`generators:${gen}:state`);
   },
   async startGenerator(gen, options) {
-    return await ipcRenderer.invoke(`generators:${gen}:start`, cleanObjectReferences(options));
+    return await ipcRenderer.invoke(`generators:${gen}:start`, JsonReParse(options));
   }
 }

@@ -55,7 +55,8 @@ var componentScript = {
   },
   async mounted() {
     await new Promise(r => this.$nextTick(r));
-    const self = window.pagePixelart = this;
+    window.pagePixelart = this;
+    const self = this;
     (() => {
       async function _update() {
         if (self.$route.path == "/pixelart") {

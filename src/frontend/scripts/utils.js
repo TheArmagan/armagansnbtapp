@@ -65,6 +65,10 @@ function throttle(func, wait, options) {
   return throttled;
 }
 
-function cleanObjectReferences(json) {
+function JsonReParse(json) {
   return JSON.parse(JSON.stringify(json));
 }
+
+function getFileExtension(urlOrFileName = "") {
+  return urlOrFileName.split(/\?|#/)[0].split(".").pop().toLowerCase();
+};

@@ -55,6 +55,10 @@ body {
 }
 
 #topbar .title {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
   font-family: "Comfortaa", cursive;
   font-weight: 700;
   font-size: 16px;
@@ -118,6 +122,10 @@ body {
   top: 0;
   left: 0;
   background-color: #e7c6ffff;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
 }
 
 #sidebar .sidebar-container {
