@@ -9,15 +9,12 @@ const API = {
     fetch("/api/focus");
   },
   async getImageSize(filePath) {
-    let { data } = await fetch("/api/other/image-size", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json"
-      },
-      body: JSON.stringify({
-        path: filePath
-      })
-    }).then(d => d.json());
-    return data;
+    return await ipcRenderer.invoke("other:image-size", filePath);
+  },
+  async getGeneratorState(gen) {
+    return await ipcRenderer.invoke(`generators:${gen}:state`);
+  },
+  async startGenerator(gen, options) {
+    return await ipcRenderer.invoke(`generators:${gen}:start`, cleanObjectReferences(options));
   }
 }

@@ -1,8 +1,9 @@
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, ipcMain } = require("electron");
 const GeneratorManager = require("./generator/GeneratorManager");
 const WebServerManager = require("./WebServerManager");
 const path = require("path");
 const checkUpdate = require("./utilities/checkUpdates");
+const Jimp = require("jimp");
 
 process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true"
 process.env["ELECTRON_ENABLE_LOGGING"] = "true"
@@ -15,12 +16,14 @@ class NBTAPP {
   /** @type {GeneratorManager} */
   generatorManager;
 
+  userConfig = {};
+
   /** @type {BrowserWindow} */
   mainWindow;
 
   async init() {
     console.log("[MAIN] Initializing...");
-    process.title = "Armagan's NBT App"
+    process.title = "Armagan's NBT App";
 
     console.log("[MAIN] Initializing WebServerManager...");
     this.webServerManager = new WebServerManager(this);
@@ -56,6 +59,23 @@ class NBTAPP {
     await this.mainWindow.loadURL(`http://127.0.0.1:${this.webServerManager.PORT}/`);
 
     checkUpdate(this.mainWindow);
+
+    console.log("[MAIN] Adding listeners for other stuffs..");
+    this._otherStuff();
+  }
+
+  _otherStuff() {
+    ipcMain.handle("other:image-size", async (_, filePath) => {
+      let img = await Jimp.read(path.resolve(filePath));
+      console.log("[OTHER] Adding listeners to invokers..");
+      let data = { width: img.getWidth(), height: img.getHeight() };
+      img = 0;
+      return data;
+    });
+
+    ipcMain.on("other:user-config-set", (_, config) => {
+      this.userConfig = config;
+    });
   }
 
 }

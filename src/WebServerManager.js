@@ -3,7 +3,6 @@ const findFreePort = require("./utilities/findFreePort");
 const path = require("path");
 const express = require("express");
 const { dialog, app, shell } = require("electron");
-const Jimp = require("jimp");
 
 
 class WebServerManager {
@@ -66,12 +65,6 @@ class WebServerManager {
       this.nbtapp.mainWindow.setAlwaysOnTop(true);
       this.nbtapp.mainWindow.focus();
       this.nbtapp.mainWindow.setAlwaysOnTop(false);
-    });
-
-    this.app.post("/api/other/image-size", async (req, res) => {
-      let img = await Jimp.read(path.resolve(req.body.path));
-      res.send({ ok: true, data: { width: img.getWidth(), height: img.getHeight(), pixelAmount: img.getWidth() * img.getHeight() } });
-      img = 0;
     });
   }
 }

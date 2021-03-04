@@ -1,3 +1,4 @@
+const { ipcMain } = require("electron");
 const NBTAPP = require("../NbtApp");
 const PixelartGenerator = require("./generators/PixelartGenerator");
 const SchematicGenerator = require("./generators/SchematicGenerator");

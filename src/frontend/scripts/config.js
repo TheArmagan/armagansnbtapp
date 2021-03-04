@@ -58,13 +58,7 @@ class ConfigManager {
   }
 
   #update = async () => {
-    await fetch("/api/config/set", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json"
-      },
-      body: JSON.stringify(this.getAll())
-    })
+    await ipcRenderer.invoke("other:user-config-set", this.getAll());
   }
 
 }
