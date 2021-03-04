@@ -43,15 +43,17 @@
       </div>
       <div class="columns">
         <div class="column">
-          <b-field v-model="ditheringFactor" label="Dithering" label-position="on-border">
-            <b-select value="5">
-              <option value="-1" disabled>AUTO (Soon)</option>
-              <option value="0">No dithering</option>
-              <option :value="n" v-for="n in 10" :key="n">
-                Dither every {{n}} pixel
-              </option>
-            </b-select>
-          </b-field>
+          <b-tooltip label="Makes image look much better from distance!" :delay="250" position="is-right" multilined>
+            <b-field v-model="ditheringFactor" label="Dithering" label-position="on-border">
+              <b-select value="5">
+                <option value="-1" disabled>AUTO (Soon)</option>
+                <option value="0">No dithering</option>
+                <option :value="n" v-for="n in 10" :key="n">
+                  Dither every {{n}} pixel
+                </option>
+              </b-select>
+            </b-field>
+          </b-tooltip>
         </div>
         <div class="column">
           <b-field label="Scale Factor" label-position="on-border">
