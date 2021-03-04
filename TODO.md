@@ -17,4 +17,4 @@
 
 * [x] Cleaner backend code.
 * [x] Cleaner frontend code.
-  * [ ] Settings Tab
+  * [x] Settings Tab.
