@@ -54,7 +54,7 @@ class ConfigManager {
     Object.keys(localStorage)
       .filter(i => i.startsWith("config:"))
       .forEach((key) => {
-        this.remove(key);
+        this.remove(key.split(":")[1]);
       })
     this._update();
   }

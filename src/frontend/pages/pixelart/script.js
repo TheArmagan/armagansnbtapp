@@ -45,6 +45,7 @@ var componentScript = {
     },
     start: debounce(async function () {
       if (this.state.running) return;
+      if (!config.get("colorMapFile")?.path) return NOTIFY.error("Please first select a color map. From the settings..");
       API.startGenerator("pixelart", {
         inputFile: this.inputFile.path,
         outputFile: this.outputFile.path,

@@ -24,8 +24,8 @@
     display: inline-block;
     min-width: 128px;
     max-width: 256px;
-    word-wrap: break-word;
-    word-break: break-all;
+    word-wrap: normal;
+    word-break: normal;
     padding: 6px;
 
     .notification-content {

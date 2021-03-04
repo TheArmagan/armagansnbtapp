@@ -1,4 +1,4 @@
-const { ipcMain } = require("electron");
+const { ipcMain, Notification } = require("electron");
 const Jimp = require("jimp");
 const GeneratorManager = require("../GeneratorManager");
 const path = require("path");
@@ -6,7 +6,6 @@ const mcfsd = require("mcfsd");
 const Appender = require("../../utilities/Appender");
 const NearestColor = require("nearest-color");
 const fs = require("fs");
-const chillout = require("chillout");
 const stuffs = require("stuffs");
 
 class PixelartGenerator {
@@ -53,8 +52,6 @@ class PixelartGenerator {
     let img = await Jimp.read(path.resolve(config.inputFile));
     this.state.stateText = "Image readd..";
     this.state.progress++;
-
-    this.state.progressMax = this.state.progressMax + (img.getWidth() * img.getHeight());
 
     if (config.scaleFactor != 1) {
       this.state.stateText = `Scaling..`;
@@ -133,6 +130,13 @@ class PixelartGenerator {
           this.state.stateText = `Baked! (Took ${secondsTook} seconds..)`;
           this.state.progress = this.state.progressMax;
           this.state.running = false;
+
+          if (userConfig.desktopNotifications) {
+            new Notification({
+              title: "Armagan's NBT App",
+              body: `Your pixel art is baked! (Took ${secondsTook} seconds..)`
+            }).show();
+          }
 
           appender = 0;
           img = 0;

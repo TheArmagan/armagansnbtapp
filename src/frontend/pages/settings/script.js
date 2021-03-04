@@ -12,13 +12,26 @@ var componentScript = {
         this.colorMapFile = null;
         return NOTIFY.error("Only .colormap.json extension is allowed!", 5000);
       }
-      this.config.colorMapFile = { name: file.name, path: file.path, size: file.size };
+      this.config.colorMapFile = { name: file.name, path: file.path };
     }
   },
   methods: {
     saveSettings() {
       config.setAll(this.config);
       NOTIFY.info("Settings are saved!");
+    },
+    resetSettings() {
+      const self = this;
+      Buefy.DialogProgrammatic.confirm({
+        message: "Do you really want to reset all settings?",
+        confirmText: "Yeah",
+        cancelText: "GO BACK!",
+        onConfirm() {
+          config.clear();
+          self.config = config.getAll();
+          NOTIFY.warn("All settings are cleared and saved!");
+        }
+      })
     }
   },
   async mounted() {
