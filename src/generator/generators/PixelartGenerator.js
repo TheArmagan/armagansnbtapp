@@ -33,7 +33,7 @@ class PixelartGenerator {
   async run(config) {
     if (this.state.running) return;
 
-
+    
   }
 }
 module.exports = PixelartGenerator;

@@ -21,7 +21,7 @@ body {
   height: 100%;
   overflow: overlay;
   background-color: $bg;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 ::-webkit-scrollbar {
@@ -203,14 +203,12 @@ body {
 
   .page {
     position: relative;
-    margin: 16px;
+    contain: content;
+    overflow: auto;
 
     .container {
-      height: calc(100vh - 26px);
-    }
-
-    .main {
-      margin-top: 16px;
+      height: calc(100vh - 22px);
+      padding: 16px;
     }
   }
 }

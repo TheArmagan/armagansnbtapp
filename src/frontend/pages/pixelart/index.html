@@ -2,7 +2,7 @@
   <div class="container">
     <div class="columns description">
       <div class="column">
-        <h1 class="title">Pixel Art Generator</h1>
+        <h1 class="title is-3">Pixel Art Generator</h1>
         <p>Here you can convert images to pixel arts.</p>
         <p>Input is schematic or schem file. Output is blank txt file.</p>
       </div>
@@ -61,15 +61,17 @@
       </div>
     </div>
     <div class="controls">
-      <b-progress show-value v-model="state.progress" :max="state.progressMax">
-        {{state.progress}}/{{state.progressMax}}
-      </b-progress>
-      <div class="columns is-vcentered">
-        <div class="column is-three-fifths">
-          <b-button type="is-primary" expanded :loading="this.state.running" :disabled="!(this.inputFile?.name && this.outputFile?.name)" @click="start()">Start</b-button>
-        </div>
-        <div class="column">
-          <b-button type="is-static" expanded>{{state.stateText}}</b-button>
+      <div class="controls-container">
+        <b-progress show-value v-model="state.progress" :max="state.progressMax">
+          {{state.progress}}/{{state.progressMax}}
+        </b-progress>
+        <div class="columns is-vcentered">
+          <div class="column is-three-fifths">
+            <b-button type="is-primary" expanded :loading="this.state.running" :disabled="!(this.inputFile?.name && this.outputFile?.name)" @click="start()">Start</b-button>
+          </div>
+          <div class="column">
+            <b-button type="is-static" expanded>{{state.stateText}}</b-button>
+          </div>
         </div>
       </div>
     </div>
