@@ -49,15 +49,15 @@ var componentScript = {
       let data = await ipcRenderer.invoke("generators:pixelart:state");
       return data;
     },
-    start: throttle(async function () {
+    start: debounce(async function () {
       if (this.state.running) return;
-      await ipcRenderer.invoke("generators:pixelart:start", {
+      await ipcRenderer.invoke("generators:pixelart:start", cleanObjectReferences({
         inputFile: this.inputFile,
         outputFile: this.outputFile,
         scaleFactor: this.scaleFactor,
         ditheringFactor: this.ditheringFactor
-      });
-    }, 1000)
+      }));
+    }, 100)
   },
   async mounted() {
     await new Promise(r => this.$nextTick(r));

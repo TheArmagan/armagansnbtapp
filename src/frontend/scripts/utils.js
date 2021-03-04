@@ -64,3 +64,7 @@ function throttle(func, wait, options) {
 
   return throttled;
 }
+
+function cleanObjectReferences(json) {
+  return JSON.parse(JSON.stringify(json));
+}

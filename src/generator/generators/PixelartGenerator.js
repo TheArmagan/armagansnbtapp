@@ -19,12 +19,13 @@ class PixelartGenerator {
   async init() {
     let app = this.generatorManager.nbtapp.webServerManager.app;
 
-    ipcMain.handle("generators:pixelart:state", async () => {
+    ipcMain.handle("generators:pixelart:state", async (_, config) => {
       return this.state;
     });
 
     ipcMain.handle("generators:pixelart:start", async () => {
-      if (this.state.running) return res.send({ ok: false });
+      if (this.state.running) return;
+      console.log("hi")
     });
   }
 
