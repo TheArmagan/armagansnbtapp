@@ -16,4 +16,4 @@
    * [ ] Water fall states.
 
 * [x] Cleaner backend code.
-* [ ] Cleaner frontend code.
+* [x] Cleaner frontend code.
