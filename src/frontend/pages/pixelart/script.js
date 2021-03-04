@@ -46,8 +46,8 @@ var componentScript = {
     start: debounce(async function () {
       if (this.state.running) return;
       API.startGenerator("pixelart", {
-        inputFile: this.inputFile,
-        outputFile: this.outputFile,
+        inputFile: this.inputFile.path,
+        outputFile: this.outputFile.path,
         scaleFactor: this.scaleFactor,
         ditheringFactor: this.ditheringFactor
       });
@@ -62,7 +62,7 @@ var componentScript = {
         if (self.$route.path == "/pixelart") {
           self.state = await API.getGeneratorState("pixelart");
         }
-        await sleep(100);
+        await sleep(50);
         _update();
       }
       _update();

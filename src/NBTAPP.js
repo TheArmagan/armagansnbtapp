@@ -36,6 +36,9 @@ class NBTAPP {
     console.log("[MAIN] Waiting electron to get ready...");
     await app.whenReady();
 
+    console.log("[MAIN] Adding listeners for other stuffs..");
+    this._otherStuff();
+
     console.log("[MAIN] Initializing MainWindow...");
     this.mainWindow = new BrowserWindow({
       transparent: true,
@@ -59,9 +62,6 @@ class NBTAPP {
     await this.mainWindow.loadURL(`http://127.0.0.1:${this.webServerManager.PORT}/`);
 
     checkUpdate(this.mainWindow);
-
-    console.log("[MAIN] Adding listeners for other stuffs..");
-    this._otherStuff();
   }
 
   _otherStuff() {

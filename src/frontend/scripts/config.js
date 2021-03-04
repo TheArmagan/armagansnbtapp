@@ -23,12 +23,12 @@ class ConfigManager {
     let valType = typeof value;
     if (defType != valType) throw `Expected type is ${defType} for key ${key} but found ${valType}!`;
     localStorage.setItem(`config:${key}`, JSON.stringify({ value }));
-    this.#update();
+    this._update();
   }
 
   remove(key) {
     localStorage.removeItem(`config:${key}`);
-    this.#update();
+    this._update();
   }
 
   getAll() {
@@ -47,7 +47,7 @@ class ConfigManager {
     Object.entries(obj).forEach(([key, value]) => {
       this.set(key, value);
     });
-    this.#update();
+    this._update();
   }
 
   clear() {
@@ -56,13 +56,14 @@ class ConfigManager {
       .forEach((key) => {
         this.remove(key);
       })
-    this.#update();
+    this._update();
   }
 
-  #update = async () => {
+  _update = async () => {
     await ipcRenderer.invoke("other:user-config-set", this.getAll());
   }
 
 }
 
 const config = new ConfigManager();
+config._update();
