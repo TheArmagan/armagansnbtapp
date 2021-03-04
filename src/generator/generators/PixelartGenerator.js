@@ -17,20 +17,23 @@ class PixelartGenerator {
   }
 
   async init() {
-    let app = this.generatorManager.nbtapp.webServerManager.app;
-
-    ipcMain.handle("generators:pixelart:state", async (_, config) => {
+    ipcMain.handle("generators:pixelart:state", async (_) => {
       return this.state;
     });
 
-    ipcMain.handle("generators:pixelart:start", async () => {
+    ipcMain.handle("generators:pixelart:start", async (_, config) => {
       if (this.state.running) return;
-      console.log("hi")
+      this.run(config);
     });
   }
 
-  async run() {
+  /**
+   * @param {{inputFile: string, outputFile: string, scaleFactor: number, ditheringFactor: number}} config 
+   */
+  async run(config) {
     if (this.state.running) return;
+
+
   }
 }
 module.exports = PixelartGenerator;
