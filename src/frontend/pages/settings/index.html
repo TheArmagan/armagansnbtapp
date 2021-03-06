@@ -17,7 +17,7 @@
       <section>
         <h1 class="title">Pixel Art Generator</h1>
         <div class="options">
-          <b-field class="file is-primary has-name" style="transform: scale(0.9); transform-origin: left center;">
+          <b-field class="file is-primary has-name">
             <b-upload v-model="colorMapFile" class="file-label" accept=".json">
               <span class="file-cta">
                 <b-icon class="file-icon" icon="upload"></b-icon>
@@ -27,6 +27,12 @@
                 {{ colorMapFile?.name ? colorMapFile?.name : "Pick a color map."}}
               </span>
             </b-upload>
+            <p v-if="!colorMapFile?.name" class="control">
+              <button class="button is-static">
+                <p>Get default.colormap.json from <a href="javascript:shell.openExternal('https://gist.github.com/TheArmagan/3dcd23420ed4510723cf5e1b7dec146c')" style="pointer-events: all;">here</a>.</p>
+              </button>
+            </p>
+
           </b-field>
         </div>
       </section>

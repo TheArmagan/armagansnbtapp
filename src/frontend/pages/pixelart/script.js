@@ -8,6 +8,7 @@ var componentScript = {
       imagePixelAmount: 0,
       scaleFactor: 1,
       ditheringFactor: 5,
+      buildFromCenter: false,
       state: {
         progressMax: 0,
         progress: 0,
@@ -50,7 +51,8 @@ var componentScript = {
         inputFile: this.inputFile.path,
         outputFile: this.outputFile.path,
         scaleFactor: this.scaleFactor,
-        ditheringFactor: this.ditheringFactor
+        ditheringFactor: this.ditheringFactor,
+        buildFromCenter: this.buildFromCenter
       });
     }, 100)
   },

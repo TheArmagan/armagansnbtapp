@@ -35,7 +35,7 @@ class PixelartGenerator {
   }
 
   /**
-   * @param {{inputFile: string, outputFile: string, scaleFactor: number, ditheringFactor: number}} config 
+   * @param {{inputFile: string, outputFile: string, scaleFactor: number, ditheringFactor: number, buildFromCenter: boolean}} config
    */
   async run(config) {
     if (this.state.running) return;
@@ -92,6 +92,9 @@ class PixelartGenerator {
     this.state.stateText = `Starting to bake..`;
     this.state.progress++;
 
+    let _halfW = config.buildFromCenter ? Math.round(img.bitmap.width / 2) : 0;
+    let _halfH = config.buildFromCenter ? Math.round(img.bitmap.height / 2) : 0;
+
     let commandsUsed = 0;
     img.scan(0, 0, img.bitmap.width, img.bitmap.height, (x, y, idx) => {
       setTimeout(() => {
@@ -101,19 +104,16 @@ class PixelartGenerator {
         let pixelColorINT = img.getPixelColor(x, y);
         let pixelColorRGBA = stuffs.intToRgba(pixelColorINT);
 
-        if (pixelColorRGBA.a == 0) {
-          appender.append(`{"cmd_line":"setblock\\t~${x}\\t~\\t~${y}\\tair","cmd_ver":12},`);
-          commandsUsed++;
-        } else {
+        if (pixelColorRGBA.a != 0) {
           let pixelColorHEX = stuffs.rgbToHex(pixelColorRGBA.r, pixelColorRGBA.g, pixelColorRGBA.b);
           let { name: blockNameAndMeta } = findNearestColor(pixelColorHEX);
 
           if (blockNameAndMeta.startsWith("sand") || blockNameAndMeta.startsWith("gravel") || blockNameAndMeta.includes("powder")) {
-            appender.append(`{"cmd_line":"setblock\\t~${x}\\t~\\t~${y}\\tstone","cmd_ver":12},`);
+            appender.append(`{"cmd_line":"setblock\\t~${x - _halfW}\\t~\\t~${y - _halfH}\\tstone","cmd_ver":12},`);
             commandsUsed++;
           }
 
-          appender.append(`{"cmd_line":"setblock\\t~${x}\\t~1\\t~${y}\\t${blockNameAndMeta}","cmd_ver":12},`);
+          appender.append(`{"cmd_line":"setblock\\t~${x - _halfW}\\t~1\\t~${y - _halfH}\\t${blockNameAndMeta}","cmd_ver":12},`);
           commandsUsed++;
         }
 
@@ -125,7 +125,7 @@ class PixelartGenerator {
 
           let secondsTook = ((Date.now() - start) / 1000).toFixed(2);
 
-          appender.append(`{"cmd_line":"kill\\t@e[type=npc,r=1]","cmd_ver":12}],"mode":0,"text":"-","type":1}]",CustomName:"Â§bArmagan's Stuff",InterativeText:"Thank you for using the Armagan's NBT App! Total ${commandsUsed} commands are used.. Took ${secondsTook} seconds to make.. https://thearmagan.github.io/discord",Variant:19,Ticking:1b,TicksLeftToStay:1}]}`, true);
+          appender.append(`{"cmd_line":"kill\\t@e[type=npc,r=1]","cmd_ver":12}],"mode":0,"text":"-","type":1}]",CustomName:"Armagan's NBT App - https://thearmagan.github.io/discord",InterativeText:"Thank you for using the Armagan's NBT App! Total ${commandsUsed} commands are used.. Took ${secondsTook} seconds to make.. (${config.buildFromCenter ? "Builds from the center!" : "Builds from the left top corner!"}) | https://thearmagan.github.io/discord",Variant:19,Ticking:1b,TicksLeftToStay:1}]}`, true);
 
           this.state.stateText = `Baked! (Took ${secondsTook} seconds..)`;
           this.state.progress = this.state.progressMax;

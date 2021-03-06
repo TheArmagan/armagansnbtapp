@@ -4,7 +4,7 @@
       <div class="column">
         <h1 class="title is-3">Pixel Art Generator</h1>
         <p>Here you can convert images to pixel arts.</p>
-        <p>Input is schematic or schem file. Output is blank txt file.</p>
+        <p>Input is the any type of image. Output is blank txt file.</p>
       </div>
       <div class="column" style="float: right; text-align: right">
         <p>Image Size: {{imageWidth}}x{{imageHeight}}</p>
@@ -45,7 +45,7 @@
         <div class="column">
           <b-tooltip label="Makes image look much better from distance!" :delay="250" position="is-right" multilined>
             <b-field v-model="ditheringFactor" label="Dithering" label-position="on-border">
-              <b-select value="5">
+              <b-select value="5" expanded>
                 <option value="-1" disabled>AUTO (Soon)</option>
                 <option value="0">No dithering</option>
                 <option :value="n" v-for="n in 10" :key="n">
@@ -60,7 +60,19 @@
             <b-numberinput v-model="scaleFactor" min="0.01" max="1024" step="0.001" value="1" expanded controls-position="compact" :exponential="0.75"></b-numberinput>
           </b-field>
         </div>
-      </div>
+        </div>
+        <div class="columns">
+          <div class="column">
+            <div class="is-vcentered">
+              <b-field>
+                <b-switch v-model="buildFromCenter">
+                  Build from the center.
+                </b-switch>
+              </b-field>
+            </div>
+          </div>
+        </div>
+        </div>
     </div>
     <div class="controls">
       <div class="controls-container">
