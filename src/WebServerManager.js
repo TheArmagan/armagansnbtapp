@@ -40,7 +40,7 @@ class WebServerManager {
       res.send("");
       let dialogResults = await dialog.showMessageBox(this.nbtapp.mainWindow, {
         type: "info",
-        message: "Do you really want the exit the app right now?",
+        message: "Do you really want to exit the app right now?",
         buttons: [
           "No",
           "Yes"

@@ -19,7 +19,7 @@ async function checkUpdate(mainWindow) {
       console.log("[UPDATER] New update found!");
       let dialogResult = await dialog.showMessageBox(mainWindow, {
         type: "warning",
-        message: "New version is out! Get the latest version!",
+        message: "The New version is out! Get the latest version?",
         buttons: [
           "No",
           "Yes"

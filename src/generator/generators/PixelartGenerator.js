@@ -50,7 +50,7 @@ class PixelartGenerator {
 
     this.state.stateText = "Reading image..";
     let img = await Jimp.read(path.resolve(config.inputFile));
-    this.state.stateText = "Image readd..";
+    this.state.stateText = "Image read..";
     this.state.progress++;
 
     if (config.scaleFactor != 1) {
@@ -72,7 +72,7 @@ class PixelartGenerator {
     this.state.progressMax = this.state.progressMax + (img.getWidth() * img.getHeight());
     let outputFile = path.resolve(config.outputFile);
 
-    this.state.stateText = `Gethering colormap data..`;
+    this.state.stateText = `Gathering colormap data..`;
     this.state.progress++;
 
     let colorMap = JSON.parse(fs.readFileSync(path.resolve(userConfig.colorMapFile.path), "utf-8"));
