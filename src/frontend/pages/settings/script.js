@@ -30,7 +30,7 @@ var componentScript = {
           config.clear();
           self.config = config.getAll();
           this.colorMapFile = null;
-          NOTIFY.warn("All settings are cleared and saved!");
+          NOTIFY.warn("All settings have been cleared and saved!");
         }
       })
     }

@@ -24,7 +24,7 @@ var componentScript = {
     outputFile(file) {
       if (!file?.name) return;
       if (file.size != 0) {
-        NOTIFY.warn("Please select a clean txt file.", 10000);
+        NOTIFY.warn("Please select a Clean/Blank txt file.", 10000);
       }
     },
     scaleFactor() {

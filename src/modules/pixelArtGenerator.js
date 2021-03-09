@@ -12,7 +12,7 @@ async function pixelArtGenerator(options, state) {
   state.state = `Reading the image file..`;
   state.current++;
   let img = await Jimp.read(path.resolve(options.filePath));
-  state.state = "Readd..";
+  state.state = "Read..";
   state.current++;
 
 
