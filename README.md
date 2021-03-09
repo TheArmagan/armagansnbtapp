@@ -5,7 +5,7 @@
 # Armagan's NBT App
 A tool for creating mojangsons in a easy way. 
 The main thing though, is converting any schematic to mojangson.
-It also has the capability to be expanded on, at <a href="https://github.com/TheArmagan/armagansnbtapp">Github</a>
+It also has the capability to be expanded on, at <a href="https://github.com/TheArmagan/armagansnbtapp">Github</a>.
 Now for if reasons unknown you cannot see the images below and above, Let me tell you about the App.
 
 It has a Working PixelArt Generator that can convert any image type except .gif into a Nbt Format that can be used in Minecraft: Bedrock Edition.
