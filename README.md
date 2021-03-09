@@ -3,7 +3,7 @@
 </p>
 
 # Armagan's NBT App
-A tool for creating mojangsons in a easy way. The main thing is converting any schematic to mojangson.
+A tool for creating mojangsons in a easy way. The main thing though, is converting any schematic to mojangson.
 
 
 You can download latest build from <a href="https://github.com/TheArmagan/armagansnbtapp/releases">here</a>.
