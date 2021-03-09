@@ -91,3 +91,5 @@ test/
 out/
 dist/
 package-lock.json
+/.vs/slnx.sqlite
+/.vs
