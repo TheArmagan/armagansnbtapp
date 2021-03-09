@@ -80,7 +80,7 @@ class PixelartGenerator {
     this.state.stateText = `Creating color map..`;
     this.state.progress++;
 
-    let findNearestColor = NearestColor.from(Object.fromEntries(colorMap.map(i => ([`${i.name}${i?.meta ? `\\t${i.meta}` : ""}`, `#${i.color}`]))));
+    let findNearestColor = NearestColor.from(Object.fromEntries(colorMap.map(i => ([`${i.name}${i.meta ? `\\t${i.meta}` : ""}`, `#${i.color}`]))));
 
     let appender = new Appender(outputFile, userConfig.appenderLimit);
 
