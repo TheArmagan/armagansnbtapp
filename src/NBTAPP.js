@@ -5,9 +5,6 @@ const path = require("path");
 const checkUpdate = require("./utilities/checkUpdates");
 const Jimp = require("jimp");
 
-process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true"
-process.env["ELECTRON_ENABLE_LOGGING"] = "true"
-
 class NBTAPP {
 
   /** @type {WebServerManager} */

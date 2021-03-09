@@ -6,6 +6,9 @@ const nbtapp = new NBTAPP();
 
 
 (async () => {
+  process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true"
+  process.env["ELECTRON_DISABLE_LOGGING"] = "true"
+
   console.log("[INIT] Initalizing...");
 
   await nbtapp.init();

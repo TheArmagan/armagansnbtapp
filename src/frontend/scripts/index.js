@@ -12,7 +12,13 @@ Vue.use(Buefy);
     let pageElement = document.createElement("body");
     pageElement.innerHTML = await fetch(`/pages/${pageName}/index.html`).then(d => d.text());
     pageElement.querySelector("div").classList.add(`${pageName}-page`, "page");
-    let pageScript = eval(`${(await fetch(`/pages/${pageName}/script.js`).then(d => d.text())) || "var componentScript = {}"}; componentScript`);
+    let pageScriptText = await fetch(`/pages/${pageName}/script.js`).then(d => d.text());
+    let pageScript = {};
+    try {
+      pageScript = eval(`${pageScriptText}; componentScript`);
+    } catch (err) {
+      console.warn(`%c[PAGES]%c An error happen when trying load component script of the ${pageName} page.\n\n${err}`, "color:#F04747;", "color:#B9BBBE;");
+    }
     let styleSheetElement = document.createElement("link");
     styleSheetElement.classList.add(`${pageName}-page-style`);
     styleSheetElement.rel = "stylesheet";
