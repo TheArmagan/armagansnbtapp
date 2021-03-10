@@ -3,7 +3,8 @@ class ConfigManager {
   #defaults = {
     colorMapFile: {},
     appenderLimit: 2048,
-    desktopNotifications: false
+    desktopNotifications: false,
+    languageCode: "en-us"
   }
 
   getDefault(key) {

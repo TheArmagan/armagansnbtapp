@@ -4,6 +4,7 @@ const WebServerManager = require("./WebServerManager");
 const path = require("path");
 const checkUpdate = require("./utilities/checkUpdates");
 const Jimp = require("jimp");
+const LanguageManager = require("./i18n/LanguageManager");
 
 class NBTAPP {
 
@@ -13,6 +14,9 @@ class NBTAPP {
   /** @type {GeneratorManager} */
   generatorManager;
 
+  /** @type {LanguageManager} */
+  languageManager;
+
   userConfig = {};
 
   /** @type {BrowserWindow} */
@@ -21,6 +25,10 @@ class NBTAPP {
   async init() {
     console.log("[MAIN] Initializing...");
     process.title = "Armagan's NBT App";
+
+    console.log("[MAIN] Initializing LanguageManager...");
+    this.languageManager = new LanguageManager(this);
+
 
     console.log("[MAIN] Initializing WebServerManager...");
     this.webServerManager = new WebServerManager(this);
