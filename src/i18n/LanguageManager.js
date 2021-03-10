@@ -21,11 +21,11 @@ class LanguageManager {
     let translationPaths = await fs.promises.readdir(translationsPath);
 
     await chillout.repeat(translationPaths.length, (i) => {
-      let translationFile = translationsPath[i];
+      let translationFile = translationPaths[i];
       let translation = require(path.resolve(translationsPath, translationFile));
 
       this.translations[translation.meta.code] = translation.meta;
-      console.log(`[i18n] Language ${translation.meta.name} (${translation.meta.code}) is loaded!`);
+      console.log(`[I18N] Language ${translation.meta.name} (${translation.meta.code}) is loaded!`);
     });
 
   }

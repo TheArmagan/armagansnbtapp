@@ -28,7 +28,7 @@ class NBTAPP {
 
     console.log("[MAIN] Initializing LanguageManager...");
     this.languageManager = new LanguageManager(this);
-
+    await this.languageManager.init();
 
     console.log("[MAIN] Initializing WebServerManager...");
     this.webServerManager = new WebServerManager(this);
