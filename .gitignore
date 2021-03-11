@@ -87,7 +87,6 @@ typings/
 
 # Other
 dist/
-test/
 out/
 dist/
 package-lock.json
