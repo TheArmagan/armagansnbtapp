@@ -13,7 +13,7 @@ class Appender {
   append(data = "", force = false) {
     this.list.push(data);
     if (this.list.length >= this.limit || force) {
-      fs.appendFileSync(this.path, this.list.join(this.joiner), "utf-8");
+      fs.appendFileSync(this.path, this.list.join(this.joiner)+this.joiner, "utf-8");
       this.list.length = 0;
     }
   }
