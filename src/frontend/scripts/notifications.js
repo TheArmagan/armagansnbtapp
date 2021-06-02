@@ -1,7 +1,10 @@
-
-
 (() => {
   window.NOTIFY = {};
+
+  const notificationStyleElement = document.createElement("style");
+  notificationStyleElement.innerHTML = `.notifications{pointer-events:none;--animate-duration:0.5s;display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-end;position:absolute;top:0;right:0;width:0;height:0;overflow:hidden}.notifications.full-size{width:100vw;height:100vh;padding:16px}.notifications .notification{margin-bottom:4px!important;display:inline-block;min-width:128px;max-width:256px;word-wrap:normal;word-break:normal;padding:6px}.notifications .notification .notification-content{margin-right:28px}`;
+  document.body.appendChild(notificationStyleElement);
+
   const notificationsElement = document.createElement("div");
   notificationsElement.classList.add("notifications");
   document.body.appendChild(notificationsElement);
